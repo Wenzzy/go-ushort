@@ -1,0 +1,84 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server for create short urls.",
+        "title": "Go-Ushorter API",
+        "contact": {
+            "name": "Wenzzy Belkov",
+            "url": "https://github.com/WenzzyX",
+            "email": "wenzzy.belkov@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:80",
+    "basePath": "/api/v1",
+    "paths": {
+        "/auth/registration": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/validators.RegisterValidator"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serializers.RegisterResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "serializers.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "integer"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "validators.RegisterValidator": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 8
+                }
+            }
+        }
+    }
+}

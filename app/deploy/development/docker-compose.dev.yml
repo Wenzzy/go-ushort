@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: 'postgres:15.2-alpine'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'postgres-data:/var/lib/postgresql/data'
+  pgadmin:
+    image: 'dpage/pgadmin4:7.0'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres
+    ports:
+      - '5050:80'
+    volumes:
+      - 'pgadmin-data:/var/lib/pgadmin'
+      - './configs/pgadmin/pgadmin_servers.json:/pgadmin4/servers.json'
+      - './configs/pgadmin/pgadmin_pgpass:/pgpass'
+
+  server:
+    container_name: app
+    build:
+      context: ../../..
+      dockerfile: ../../../Dockerfile-dev
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    volumes:
+      - ../../:/app
+    restart: always
+
+volumes:
+  postgres-data:
+  pgadmin-data:

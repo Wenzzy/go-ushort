@@ -1,0 +1,5 @@
+output:
+  dir: migrations
+  format: sql
+  auto_generate_models: true
+  auto_generate_migrations: true

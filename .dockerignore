@@ -1,0 +1,20 @@
+# Versioning and metadata
+.git
+.gitignore
+.dockerignore
+.idea
+.vscode
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+*.test
+*.out
+
+vendor
+tmp
+
+README.md
