@@ -8,21 +8,32 @@ import (
 	"github.com/go-playground/validator/v10"
 	"go-ushorter/app/common/constants/emsgs"
 	"go-ushorter/app/config"
-	"log"
 	"strings"
 	"time"
 )
 
-func GenToken(id uint) string {
-	jwt_token := jwt.New(jwt.GetSigningMethod("HS256"))
-	// Set some claims
-	jwt_token.Claims = jwt.MapClaims{
-		"id":  id,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
-	}
+func GenAuthTokens(id uint) (string, string) {
 	cfg := config.GetCfg()
-	token, _ := jwt_token.SignedString([]byte(cfg.Server.JwtSecret))
-	return token
+	access_token_duration, _ := time.ParseDuration(cfg.Server.JwtAccessExpTime)
+	refresh_token_duration, _ := time.ParseDuration(cfg.Server.JwtRefreshExpTime)
+
+	access_token := jwt.New(jwt.GetSigningMethod("HS256"))
+	access_token.Claims = jwt.MapClaims{
+		"id":  id,
+		"exp": time.Now().Add(access_token_duration).Unix(),
+	}
+
+	signed_access_token, _ := access_token.SignedString([]byte(cfg.Server.JwtAccessSecret))
+
+	refresh_token := jwt.New(jwt.GetSigningMethod("HS256"))
+	refresh_token.Claims = jwt.MapClaims{
+		"id":  id,
+		"exp": time.Now().Add(refresh_token_duration).Unix(),
+	}
+
+	signed_refresh_token, _ := access_token.SignedString([]byte(cfg.Server.JwtRefreshSecret))
+
+	return signed_access_token, signed_refresh_token
 }
 
 func msgForValidationTag(tag string) string {
@@ -37,12 +48,16 @@ func msgForValidationTag(tag string) string {
 }
 
 type CommonError struct {
-	Error       string `json:"message"`
+	Message     string `json:"message"`
 	Description string `json:"description,omitempty"`
 }
 
 type CommonValidationError struct {
 	Errors map[string]string `json:"validation-errors"`
+}
+
+func (ce *CommonError) Error() string {
+	return ce.Message
 }
 
 func NewValidatorError(err error) CommonValidationError {
@@ -51,20 +66,13 @@ func NewValidatorError(err error) CommonValidationError {
 	errs := err.(validator.ValidationErrors)
 	for _, v := range errs {
 		res.Errors[v.Field()] = msgForValidationTag(v.Tag())
-		//if v.Param() != "" {
-		//	res.Errors[v.Field()] = fmt.Sprintf("{%v: %v}", v.Tag, v.Param)
-		//} else {
-		//	res.Errors[v.Field()] = fmt.Sprintf("{key: %v}", v.Tag)
-		//}
-
 	}
 	return res
 }
 
-// Warp the error info in a object
 func NewError(errMsg string, descriptionStrings ...string) *CommonError {
 	res := CommonError{}
-	res.Error = errMsg
+	res.Message = errMsg
 	if len(descriptionStrings) > 0 {
 		res.Description = strings.Join(descriptionStrings[:], ",")
 	}
@@ -78,28 +86,4 @@ func NewError(errMsg string, descriptionStrings ...string) *CommonError {
 func Bind(c *gin.Context, obj interface{}) error {
 	b := binding.Default(c.Request.Method, c.ContentType())
 	return c.ShouldBindWith(obj, b)
-}
-
-func GetDbConfiguration() string {
-	cfg := config.GetCfg()
-
-	DBDSN := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-		cfg.Database.Host,
-		cfg.Database.User,
-		cfg.Database.Pass,
-		cfg.Database.Name,
-		cfg.Database.Port,
-		cfg.Database.SslMode,
-	)
-
-	return DBDSN
-}
-
-func GetRunServerConfig() string {
-	cfg := config.GetCfg()
-
-	appServer := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
-	log.Print("Server Running at: ", appServer)
-	return appServer
 }

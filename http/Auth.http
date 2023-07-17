@@ -1,5 +1,5 @@
 
-# Registration withour password field
+# Registration without password field
 POST {{baseUrl}}/auth/registration
 Accept: application/json
 Content-Type: application/json
@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ###
 
-# Registration withour password field
+# Registration
 POST {{baseUrl}}/auth/registration
 Accept: application/json
 Content-Type: application/json
@@ -21,3 +21,39 @@ Content-Type: application/json
   "email": "test.mail@testmail.qwerty",
   "password": "testQuerty1243@@"
 }
+
+###
+
+# Login wrong password
+POST {{baseUrl}}/auth/login
+Accept: application/json
+Content-Type: application/json
+
+
+{
+  "email": "test.mail@testmail.qwerty",
+  "password": "testQuerty1243@"
+}
+
+
+###
+
+# Login
+POST {{baseUrl}}/auth/login
+Accept: application/json
+Content-Type: application/json
+
+
+{
+  "email": "test.mail@testmail.qwerty",
+  "password": "testQuerty1243@@"
+}
+
+
+###
+
+# Refresh
+POST {{baseUrl}}/auth/refresh
+Accept: application/json
+
+

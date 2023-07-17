@@ -3,7 +3,6 @@ package main
 import (
 	"go-ushorter/app/common/database"
 	"go-ushorter/app/common/logger"
-	"go-ushorter/app/common/utils"
 	"go-ushorter/app/config"
 	"go-ushorter/app/routers"
 	"time"
@@ -23,7 +22,9 @@ import (
 //	@host		localhost:80
 //	@BasePath	/api/v1
 
-//	@securityDefinitions.bearer	Access-Token
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Access-token
 
 func main() {
 
@@ -36,11 +37,12 @@ func main() {
 	loc, _ := time.LoadLocation(cfg.Server.Timezone)
 	time.Local = loc
 
-	DBDSN := utils.GetDbConfiguration()
-	if err := database.DbConnection(DBDSN); err != nil {
+	DBDSN := config.GetDbConfiguration()
+	_, err := database.DbConnection(DBDSN)
+	if err != nil {
 		logger.Fatalf("database DbConnection error: %s", err)
 	}
 
 	router := routers.SetupRoute()
-	logger.Fatalf("%v", router.Run(utils.GetRunServerConfig()))
+	logger.Fatalf("%v", router.Run(config.GetRunServerConfig()))
 }

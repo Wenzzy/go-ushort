@@ -2,7 +2,7 @@ package database
 
 import (
 	"github.com/pressly/goose/v3"
-	"github.com/spf13/viper"
+	"go-ushorter/app/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,23 +16,13 @@ var (
 	err error
 )
 
-//	func Migrate() {
-//		var migrationModels = []any{&models.Example{}}
-//
-//		err := database.DB.AutoMigrate(migrationModels...)
-//		if err != nil {
-//			return
-//		}
-//	}
-
-func DbConnection(DSN string) error {
+func DbConnection(DSN string) (*gorm.DB, error) {
 	var db = DB
-	logMode := viper.GetBool("DB_LOG_MODE")
-	//debug := viper.GetBool("DEBUG")
+	cfg := config.GetCfg()
 
 	logLevel := logger.Silent
 
-	if logMode {
+	if cfg.Database.LogMode || cfg.Server.IsDebug {
 		logLevel = logger.Info
 	}
 
@@ -42,7 +32,7 @@ func DbConnection(DSN string) error {
 	})
 
 	// if need use replicas:
-	//if !debug {
+	//if cfg.Database.LogMode || cfg.Server.IsDebug {
 	//		db.Use(dbresolver.Register(dbresolver.Config{
 	//			Replicas: []gorm.Dialector{
 	//				postgres.Open(replicaDSN),
@@ -53,12 +43,12 @@ func DbConnection(DSN string) error {
 
 	if err != nil {
 		log.Fatalf("Db connection error")
-		return err
+		return nil, err
 	}
 
 	if err := goose.SetDialect("postgres"); err != nil {
-		log.Fatalf("Error set dialect for goose")
-		return err
+		log.Fatalf("Message set dialect for goose")
+		return nil, err
 	}
 
 	sqlDB, err := db.DB()
@@ -67,17 +57,17 @@ func DbConnection(DSN string) error {
 	}
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("Error while getting CWD")
-		return err
+		log.Fatalf("Message while getting CWD")
+		return nil, err
 	}
 
 	if err := goose.Up(sqlDB, filepath.Join(cwd, "app/common/database/migrations")); err != nil {
-		log.Fatalf("Error apply migrations")
-		return err
+		log.Fatalf("Message apply migrations")
+		return nil, err
 	}
 
 	DB = db
-	return nil
+	return db, nil
 
 }
 

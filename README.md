@@ -1,13 +1,56 @@
-### Database actions
+# go-ushorter
+My pet project that shortens long links ;)
+
+## Todo
+- [x] JWT Authentication (access,refresh)
+- [ ] Create/update link by user
+- [ ] Configure JSON-only logger on IsProduction mode
+- [ ] Create script (alias) for migration creation
+- [ ] Write tests
+
+
+For simple run scripts - make alias `alias gr="sh run.sh"`
+
+
+### General scripts
 
 ```shell
-goose -dir common/database/migrations postgres "postgresql://dev_user:dev@localhost:5432/ushorter" up
+gr docker.all
+# Run app with all needed services in docker (build required)
+```
+
+```shell
+gr docker.all-nb
+# Run app with all needed services in docker (NO-build)
+```
+
+```shell
+gr docker.db
+# Run database in docker only
+```
+
+```shell
+gr docker.stop
+# Stop project docker-compose
+```
+
+```shell
+gr docs
+# Fmt comments and generate swagger docs static files
+```
+
+
+
+### Database scripts
+
+```shell
+gr mg:r
 # apply migrations
 ```
 
 
 ```shell
-goose -dir common/database/migrations postgres "postgresql://dev_user:dev@localhost:5432/ushorter" down
+gr mg:rv
 # rollback migrations
 ```
 
@@ -16,4 +59,3 @@ goose -dir common/database/migrations create migration_name sql
 # create new migration
 ```
 
-> for simple run scripts - make alias `alias gr="sh run.sh"`

@@ -28,9 +28,11 @@ const (
 
 const (
 	Internal                  = "internal"
+	Unauthorized              = "unauthorized"
 	NoPermissions             = "no-permissions"
 	Banned                    = "banned"
 	TooManyConcurrentRequests = "too-many-concurrent-requests"
+	WrongCredentials          = "wrong-credentials"
 )
 
 func GetWrongError(fieldName string) string {

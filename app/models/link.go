@@ -1,6 +1,9 @@
 package models
 
 import (
+	"go-ushorter/app/common/constants/emsgs"
+	"go-ushorter/app/common/database"
+	"go-ushorter/app/common/utils"
 	"time"
 )
 
@@ -16,4 +19,14 @@ type LinkModel struct {
 // TableName is Database TableName of this model
 func (e *LinkModel) TableName() string {
 	return "link"
+}
+
+func FindAllLinks(condition any) ([]LinkModel, *utils.CommonError) {
+	db := database.GetDB()
+	var models []LinkModel
+	err := db.Where(condition).Find(&models).Error
+	if err == nil {
+		return models, nil
+	}
+	return models, utils.NewError(emsgs.Internal)
 }

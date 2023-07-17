@@ -1,0 +1,13 @@
+# Get all links (without auth)
+GET {{baseUrl}}/links
+Accept: application/json
+
+###
+
+
+# Get all links (with auth)
+GET {{baseUrl}}/links
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODk2MTcyNDAsImlkIjozMn0.yquxFsdO9Q4WfrvJ4I9a_7yz1qtqiInYcmzUTPeUB3k
+
+###

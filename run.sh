@@ -11,7 +11,7 @@ MIGRATIONS_DB_URI="postgresql://dev_user:dev@localhost:5432/ushorter"
 ENTRYPOINT_FILE="./app/cmd/app/main.go"
 
 run_logs() {
-  trap 'sh run.sh stop' INT
+  trap 'sh run.sh docker.stop' INT
 #  docker compose -p ${PROJECT_NAME} logs -f app
   docker logs -f app
 }
@@ -38,8 +38,8 @@ case $1 in
 'mg:rv')
   goose -dir ${MIGRATIONS_PATH} postgres ${MIGRATIONS_DB_URI} down;;
 'docs')
-  swag fmt
-  swag init
+  swag fmt -g ./app/cmd/app/main.go
+  swag init --parseInternal --parseDepth 2 -g ./app/cmd/app/main.go
   ;;
 *)
   echo "please run with not empty attributes (docker.all, docker.all-nb, docker.db, docker.stop, run, mg:r, mg:rv, docs)";;

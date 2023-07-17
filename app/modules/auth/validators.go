@@ -1,4 +1,4 @@
-package validators
+package auth
 
 import (
 	"github.com/gin-gonic/gin"
@@ -25,5 +25,24 @@ func (v *RegisterValidator) Bind(c *gin.Context) error {
 
 func NewRegisterValidator() RegisterValidator {
 	v := RegisterValidator{}
+	return v
+}
+
+// ###
+
+type LoginValidator struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+func (v *LoginValidator) Bind(c *gin.Context) error {
+	if err := utils.Bind(c, v); err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewLoginValidator() LoginValidator {
+	v := LoginValidator{}
 	return v
 }

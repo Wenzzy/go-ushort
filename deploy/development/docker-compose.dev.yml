@@ -28,7 +28,7 @@ services:
   server:
     container_name: app
     build:
-      context: ../../..
+      context: ../..
       dockerfile: ../../../Dockerfile-dev
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
@@ -36,6 +36,8 @@ services:
       - postgres
     links:
       - postgres:postgres
+    environment:
+      DB_HOST: postgres
     volumes:
       - ../../:/app
     restart: always
