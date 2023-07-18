@@ -34,7 +34,7 @@ func Registration(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, err)
 		return
 	}
-	c.Set("user_model", validator.UserModel)
+	c.Set("userModel", validator.UserModel)
 	sz := AuthSerializer{c}
 	res := sz.Response()
 
@@ -74,7 +74,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.Set("user_model", user)
+	c.Set("userModel", user)
 	sz := AuthSerializer{c}
 	res := sz.Response()
 	if err := SetRefreshToContext(c, res.RefreshToken); err != nil {
@@ -96,13 +96,13 @@ func Login(c *gin.Context) {
 //	@Param		cookie	header		string	true	"Cookie"	default(refresh_token="...")
 //	@Router		/auth/refresh [post]
 func Refresh(c *gin.Context) {
-	refresh_token, err := c.Request.Cookie("refresh_token")
+	refreshToken, err := c.Request.Cookie("refreshToken")
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, utils.NewError(emsgs.Unauthorized))
 		return
 	}
 
-	token, err := jwt.Parse(refresh_token.Value, func(token *jwt.Token) (any, error) {
+	token, err := jwt.Parse(refreshToken.Value, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
@@ -110,6 +110,7 @@ func Refresh(c *gin.Context) {
 		return []byte(cfg.Server.JwtRefreshSecret), nil
 	})
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusUnauthorized, utils.NewError(emsgs.Unauthorized))
 		return
 	}
@@ -125,7 +126,7 @@ func Refresh(c *gin.Context) {
 		return
 	}
 
-	c.Set("user_model", user)
+	c.Set("userModel", user)
 	sz := AuthSerializer{c}
 	res := sz.Response()
 	if err := SetRefreshToContext(c, res.RefreshToken); err != nil {

@@ -202,6 +202,153 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Create new link",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/links.LinkCreateValidator"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/links.CreatedLinkResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/links/{linkId}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Update link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Link ID",
+                        "name": "linkId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/links.LinkUpdateValidator"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Empty response"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{alias}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Redirect from alias to realLink",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short URL Alias",
+                        "name": "alias",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/links.CreatedLinkResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonError"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonValidationError"
+                        }
+                    }
+                }
             }
         }
     },
@@ -209,10 +356,10 @@ const docTemplate = `{
         "auth.AuthResponse": {
             "type": "object",
             "properties": {
-                "access_token": {
+                "accessToken": {
                     "type": "string"
                 },
-                "refresh_token": {
+                "refreshToken": {
                     "type": "string"
                 }
             }
@@ -249,13 +396,40 @@ const docTemplate = `{
                 }
             }
         },
+        "links.CreatedLinkResponse": {
+            "type": "object",
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "links.LinkCreateValidator": {
+            "type": "object",
+            "required": [
+                "realUrl"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 150
+                },
+                "realUrl": {
+                    "type": "string",
+                    "maxLength": 2000
+                }
+            }
+        },
         "links.LinkResponse": {
             "type": "object",
             "properties": {
                 "alias": {
                     "type": "string"
                 },
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "id": {
@@ -264,8 +438,17 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "real_url": {
+                "realUrl": {
                     "type": "string"
+                }
+            }
+        },
+        "links.LinkUpdateValidator": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 150
                 }
             }
         },

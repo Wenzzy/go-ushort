@@ -2,9 +2,9 @@ basePath: /api/v1
 definitions:
   auth.AuthResponse:
     properties:
-      access_token:
+      accessToken:
         type: string
-      refresh_token:
+      refreshToken:
         type: string
     type: object
   auth.LoginValidator:
@@ -29,17 +29,41 @@ definitions:
     - email
     - password
     type: object
+  links.CreatedLinkResponse:
+    properties:
+      alias:
+        type: string
+      id:
+        type: integer
+    type: object
+  links.LinkCreateValidator:
+    properties:
+      name:
+        maxLength: 150
+        type: string
+      realUrl:
+        maxLength: 2000
+        type: string
+    required:
+    - realUrl
+    type: object
   links.LinkResponse:
     properties:
       alias:
         type: string
-      created_at:
+      createdAt:
         type: string
       id:
         type: integer
       name:
         type: string
-      real_url:
+      realUrl:
+        type: string
+    type: object
+  links.LinkUpdateValidator:
+    properties:
+      name:
+        maxLength: 150
         type: string
     type: object
   utils.CommonError:
@@ -69,6 +93,34 @@ info:
   title: Go-Ushorter API
   version: "1.0"
 paths:
+  /{alias}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Short URL Alias
+        in: path
+        name: alias
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/links.CreatedLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.CommonError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.CommonValidationError'
+      security:
+      - BearerAuth: []
+      summary: Redirect from alias to realLink
   /auth/login:
     post:
       consumes:
@@ -182,6 +234,70 @@ paths:
       security:
       - BearerAuth: []
       summary: Get all links for user
+      tags:
+      - Links
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/links.LinkCreateValidator'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/links.CreatedLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.CommonError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.CommonValidationError'
+      security:
+      - BearerAuth: []
+      summary: Create new link
+      tags:
+      - Links
+  /links/{linkId}:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Link ID
+        in: path
+        name: linkId
+        required: true
+        type: string
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/links.LinkUpdateValidator'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Empty response
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.CommonError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/utils.CommonValidationError'
+      security:
+      - BearerAuth: []
+      summary: Update link
       tags:
       - Links
 securityDefinitions:

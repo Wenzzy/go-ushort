@@ -11,12 +11,12 @@ type AuthSerializer struct {
 }
 
 type AuthResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }
 
 func (self *AuthSerializer) Response() AuthResponse {
-	model := self.C.MustGet("user_model").(models.UserModel)
+	model := self.C.MustGet("userModel").(models.UserModel)
 	access, refresh := utils.GenAuthTokens(model.ID)
 	r := AuthResponse{
 		access,

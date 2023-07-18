@@ -3,6 +3,7 @@ package main
 import (
 	"go-ushorter/app/common/database"
 	"go-ushorter/app/common/logger"
+	"go-ushorter/app/common/utils"
 	"go-ushorter/app/config"
 	"go-ushorter/app/routers"
 	"time"
@@ -24,7 +25,7 @@ import (
 
 //	@securityDefinitions.apikey	BearerAuth
 //	@in							header
-//	@name						Access-token
+//	@name						Authorization
 
 func main() {
 
@@ -44,5 +45,6 @@ func main() {
 	}
 
 	router := routers.SetupRoute()
+	utils.SetupValidatorOptions()
 	logger.Fatalf("%v", router.Run(config.GetRunServerConfig()))
 }

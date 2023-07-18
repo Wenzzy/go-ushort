@@ -3,9 +3,9 @@ My pet project that shortens long links ;)
 
 ## Todo
 - [x] JWT Authentication (access,refresh)
-- [ ] Create/update link by user
+- [x] Create/update link by user
 - [ ] Configure JSON-only logger on IsProduction mode
-- [ ] Create script (alias) for migration creation
+- [x] Create script (alias) for migration creation
 - [ ] Write tests
 
 
@@ -55,7 +55,7 @@ gr mg:rv
 ```
 
 ```shell
-goose -dir common/database/migrations create migration_name sql 
+gr mg:c [name]
 # create new migration
 ```
 

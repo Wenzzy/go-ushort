@@ -26,4 +26,7 @@ func RegisterRoutes(r *gin.Engine) {
 	// api routes
 	auth.Router(v1.Group("/auth"))
 	links.Router(v1.Group("/links"))
+
+	// alias for short url
+	r.GET("/:alias", links.Redirect)
 }

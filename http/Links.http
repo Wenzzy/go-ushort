@@ -8,6 +8,29 @@ Accept: application/json
 # Get all links (with auth)
 GET {{baseUrl}}/links
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODk2MTcyNDAsImlkIjozMn0.yquxFsdO9Q4WfrvJ4I9a_7yz1qtqiInYcmzUTPeUB3k
+Authorization: Bearer {{accessToken}}
+
+###
+
+
+# Create new link
+POST {{baseUrl}}/links
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+
+{
+  "name": "test link 1",
+  "realUrl": "https://google.com"
+}
+
+###
+
+
+# Redirect (alias for realUrl)
+GET {{baseRootUrl}}/vi
+Accept: application/json
+
 
 ###

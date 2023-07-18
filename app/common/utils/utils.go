@@ -6,21 +6,24 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/xhit/go-str2duration/v2"
 	"go-ushorter/app/common/constants/emsgs"
 	"go-ushorter/app/config"
+	"math/rand"
+	"reflect"
 	"strings"
 	"time"
 )
 
 func GenAuthTokens(id uint) (string, string) {
 	cfg := config.GetCfg()
-	access_token_duration, _ := time.ParseDuration(cfg.Server.JwtAccessExpTime)
-	refresh_token_duration, _ := time.ParseDuration(cfg.Server.JwtRefreshExpTime)
+	accessTokenDuration, _ := str2duration.ParseDuration(cfg.Server.JwtAccessExpTime)
+	refreshTokenDuration, _ := str2duration.ParseDuration(cfg.Server.JwtRefreshExpTime)
 
 	access_token := jwt.New(jwt.GetSigningMethod("HS256"))
 	access_token.Claims = jwt.MapClaims{
 		"id":  id,
-		"exp": time.Now().Add(access_token_duration).Unix(),
+		"exp": time.Now().Add(accessTokenDuration).Unix(),
 	}
 
 	signed_access_token, _ := access_token.SignedString([]byte(cfg.Server.JwtAccessSecret))
@@ -28,10 +31,10 @@ func GenAuthTokens(id uint) (string, string) {
 	refresh_token := jwt.New(jwt.GetSigningMethod("HS256"))
 	refresh_token.Claims = jwt.MapClaims{
 		"id":  id,
-		"exp": time.Now().Add(refresh_token_duration).Unix(),
+		"exp": time.Now().Add(refreshTokenDuration).Unix(),
 	}
 
-	signed_refresh_token, _ := access_token.SignedString([]byte(cfg.Server.JwtRefreshSecret))
+	signed_refresh_token, _ := refresh_token.SignedString([]byte(cfg.Server.JwtRefreshSecret))
 
 	return signed_access_token, signed_refresh_token
 }
@@ -86,4 +89,28 @@ func NewError(errMsg string, descriptionStrings ...string) *CommonError {
 func Bind(c *gin.Context, obj interface{}) error {
 	b := binding.Default(c.Request.Method, c.ContentType())
 	return c.ShouldBindWith(obj, b)
+}
+
+const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+var realRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+func GenRandomString(length int) string {
+	res := make([]byte, length)
+	for i := range res {
+		res[i] = charset[realRand.Intn(len(charset))]
+	}
+	return string(res)
+}
+
+func SetupValidatorOptions() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			if name == "-" {
+				return ""
+			}
+			return name
+		})
+	}
 }

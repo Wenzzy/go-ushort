@@ -12,7 +12,7 @@ type LinkModel struct {
 	Name           *string    `gorm:"column:name"`
 	RealUrl        string     `gorm:"column:real_url;unique"`
 	GeneratedAlias string     `gorm:"column:generated_alias;unique"`
-	CreatedAt      *time.Time `gorm:"column:registered_at;not null;default:CURRENT_TIMESTAMP"`
+	CreatedAt      *time.Time `gorm:"column:created_at;not null;default:CURRENT_TIMESTAMP"`
 	UserID         uint       `gorm:"column:user_id"`
 }
 

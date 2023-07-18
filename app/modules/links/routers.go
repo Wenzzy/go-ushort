@@ -7,6 +7,8 @@ import (
 
 func Router(route *gin.RouterGroup) {
 	route.Use(middlewares.AuthMiddleware(true))
-	route.GET("/", GetAllLinks)
+	route.GET("/", GetAll)
+	route.POST("/", Create)
+	route.PATCH("/:linkId", Update)
 
 }

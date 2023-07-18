@@ -19,7 +19,7 @@ type ServerConfiguration struct {
 	JwtAccessSecret      string `mapstructure:"JWT_ACCESS_SECRET" validate:"required"`
 	JwtAccessExpTime     string `mapstructure:"JWT_ACCESS_EXP_TIME" validate:"required"`
 	JwtRefreshSecret     string `mapstructure:"JWT_REFRESH_SECRET" validate:"required"`
-	JwtRefreshExpTime    string `mapstructure:"JWT_REFRESH_SECRET" validate:"required"`
+	JwtRefreshExpTime    string `mapstructure:"JWT_REFRESH_EXP_TIME" validate:"required"`
 	LimitCountPerRequest int64  `mapstructure:"LIMIT_COUNT_PER_REQUEST"`
 }
 
