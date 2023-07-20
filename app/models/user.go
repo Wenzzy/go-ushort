@@ -2,9 +2,9 @@ package models
 
 import (
 	"errors"
-	"go-ushorter/app/common/constants/emsgs"
-	"go-ushorter/app/common/database"
-	"go-ushorter/app/common/utils"
+	"go-ushort/app/common/constants/emsgs"
+	"go-ushort/app/common/database"
+	"go-ushort/app/common/utils"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"time"

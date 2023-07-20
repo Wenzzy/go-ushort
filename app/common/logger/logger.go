@@ -1,23 +1,32 @@
 package logger
 
 import (
-	"bytes"
+	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"strings"
-	"time"
+	"go-ushort/app/config"
+	"path"
+	"runtime"
+	"strconv"
 )
 
 var logger = logrus.New()
 
-func init() {
-	logger.Level = logrus.InfoLevel
-	logger.Formatter = &formatter{}
-
-	logger.SetReportCaller(true)
+func loggerPrettyfier(frame *runtime.Frame) (function string, file string) {
+	fileName := path.Base(frame.File) + ":" + strconv.Itoa(frame.Line)
+	return "", fileName
 }
 
-func SetLogLevel(level logrus.Level) {
-	logger.Level = level
+func InitLogger() {
+	cfg := config.GetCfg()
+	logger.Level = logrus.InfoLevel
+	if cfg.Server.IsDebug {
+		logger.SetFormatter(&logrus.TextFormatter{CallerPrettyfier: loggerPrettyfier})
+	} else {
+		logger.SetFormatter(&logrus.JSONFormatter{CallerPrettyfier: loggerPrettyfier})
+	}
+
+	logger.SetReportCaller(true)
 }
 
 type Fields logrus.Fields
@@ -57,19 +66,23 @@ func Fatalf(format string, args ...interface{}) {
 	}
 }
 
-type formatter struct {
-	prefix string
-}
+func JsonLoggerMiddleware() gin.HandlerFunc {
+	return gin.LoggerWithFormatter(
+		func(params gin.LogFormatterParams) string {
+			log := make(map[string]interface{})
 
-func (f *formatter) Format(entry *logrus.Entry) ([]byte, error) {
-	var sb bytes.Buffer
+			log["status_code"] = params.StatusCode
+			log["status_code"] = params.StatusCode
+			log["path"] = params.Path
+			log["method"] = params.Method
+			log["start_time"] = params.TimeStamp.Format("2006-01-02T15:04:05")
+			log["remote_addr"] = params.ClientIP
+			log["response_time"] = params.Latency.String()
+			log["referrer"] = params.Request.Referer()
+			log["request_id"] = params.Request.Header.Get("Request-Id")
 
-	sb.WriteString(strings.ToUpper(entry.Level.String()))
-	sb.WriteString(" ")
-	sb.WriteString(entry.Time.Format(time.RFC3339))
-	sb.WriteString(" ")
-	sb.WriteString(f.prefix)
-	sb.WriteString(entry.Message)
-
-	return sb.Bytes(), nil
+			s, _ := json.Marshal(log)
+			return string(s) + "\n"
+		},
+	)
 }

@@ -2,8 +2,8 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushorter/app/common/utils"
-	"go-ushorter/app/models"
+	"go-ushort/app/common/utils"
+	"go-ushort/app/models"
 )
 
 type RegisterValidator struct {

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
-	"go-ushorter/app/common/logger"
 	"log"
 )
 
 type ServerConfiguration struct {
 	IsProduction         bool   `mapstructure:"IS_PRODUCTION"`
+	IsEnableProm         bool   `mapstructure:"IS_ENABLE_PROM"`
 	IsDebug              bool   `mapstructure:"IS_DEBUG"`
 	AllowedHosts         string `mapstructure:"ALLOWED_HOSTS"`
 	Domain               string `mapstructure:"DOMAIN" validate:"required"`
@@ -24,13 +24,14 @@ type ServerConfiguration struct {
 }
 
 type DatabaseConfiguration struct {
-	Name    string `mapstructure:"DB_NAME" validate:"required"`
-	User    string `mapstructure:"DB_USER" validate:"required"`
-	Pass    string `mapstructure:"DB_PASS" validate:"required"`
-	Host    string `mapstructure:"DB_HOST" validate:"required"`
-	Port    string `mapstructure:"DB_PORT" validate:"required"`
-	SslMode string `mapstructure:"DB_SSL_MODE"`
-	LogMode bool   `mapstructure:"DB_LOG_MODE"`
+	Name           string `mapstructure:"DB_NAME" validate:"required"`
+	User           string `mapstructure:"DB_USER" validate:"required"`
+	Pass           string `mapstructure:"DB_PASS" validate:"required"`
+	Host           string `mapstructure:"DB_HOST"`
+	Port           string `mapstructure:"DB_PORT"`
+	SslMode        string `mapstructure:"DB_SSL_MODE"`
+	LogMode        bool   `mapstructure:"DB_LOG_MODE"`
+	MigrationsPath string `mapstructure:"MIGRATIONS_PATH"`
 }
 
 type Configuration struct {
@@ -42,24 +43,27 @@ var (
 	Cfg *Configuration
 )
 
-func SetupConfig() error {
+func SetupConfig(configPath string) error {
 	var configuration *Configuration
-	viper.SetConfigFile("configs/.env")
+	viper.SetConfigFile(configPath)
 	viper.SetDefault("IS_PRODUCTION", true)
 	viper.SetDefault("IS_DEBUG", false)
+	viper.SetDefault("IS_ENABLE_PROM", true)
 	viper.SetDefault("ALLOWED_HOSTS", "0.0.0.0")
 	viper.SetDefault("SERVER_HOST", "0.0.0.0")
 	viper.SetDefault("SERVER_PORT", "8000")
 	viper.SetDefault("SERVER_TIMEZONE", "Europe/Berlin")
+	viper.SetDefault("DB_HOST", "localhost")
+	viper.SetDefault("DB_PORT", "5432")
+	viper.SetDefault("MIGRATIONS_PATH", "./app/common/database/migrations")
 
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
-		logger.Errorf("Message to reading config file", err)
-		return err
+		log.Printf("Message to reading config file: %v", err)
 	}
 
 	if err := viper.Unmarshal(&configuration); err != nil {
-		logger.Errorf("error to decode, %v", err)
+		log.Fatalf("error to decode, %v", err)
 		return err
 	}
 

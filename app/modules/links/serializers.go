@@ -2,7 +2,8 @@ package links
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushorter/app/models"
+	db_utils "go-ushort/app/common/db-utils"
+	"go-ushort/app/models"
 )
 
 type LinkSerializer struct {
@@ -29,14 +30,17 @@ func (s *LinkSerializer) Response() LinkResponse {
 }
 
 type LinksSerializer struct {
-	C     *gin.Context
-	Links []models.LinkModel
+	C           *gin.Context
+	Links       []models.LinkModel
+	TotalCount  int64
+	Took        int
+	CurrentPage int
 }
 
-func (s *LinksSerializer) Response() []LinkResponse {
-	res := make([]LinkResponse, 0, len(s.Links))
+func (s *LinksSerializer) Response() db_utils.GetAllResponse {
+	data := make([]LinkResponse, 0, len(s.Links))
 	for _, lm := range s.Links {
-		res = append(res, LinkResponse{
+		data = append(data, LinkResponse{
 			lm.ID,
 			*lm.Name,
 			lm.RealUrl,
@@ -44,7 +48,13 @@ func (s *LinksSerializer) Response() []LinkResponse {
 			lm.CreatedAt.String(),
 		})
 	}
-	return res
+	getAllSrz := db_utils.GetAllSerializer{
+		Data:        data,
+		TotalCount:  s.TotalCount,
+		Took:        s.Took,
+		CurrentPage: s.CurrentPage,
+	}
+	return getAllSrz.Response()
 }
 
 type CreatedLinkSerializer struct {

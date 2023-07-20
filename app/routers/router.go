@@ -2,12 +2,13 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushorter/app/common/logger"
-	"go-ushorter/app/config"
-	"go-ushorter/app/routers/middlewares"
+	"go-ushort/app/common/logger"
+	"go-ushort/app/common/metrics"
+	"go-ushort/app/config"
+	"go-ushort/app/routers/middlewares"
 )
 
-func SetupRoute() *gin.Engine {
+func SetupRouter() *gin.Engine {
 	cfg := config.GetCfg()
 	debugMode := cfg.Server.IsDebug
 	if debugMode {
@@ -17,13 +18,22 @@ func SetupRoute() *gin.Engine {
 	}
 
 	allowedHosts := cfg.Server.AllowedHosts
-	r := gin.Default()
+	r := gin.New()
+
+	r.Use(gin.Recovery())
+
+	metrics.InitMetrics(r)
+
+	if cfg.Server.IsDebug {
+		r.Use(gin.Logger())
+	} else {
+		r.Use(logger.JsonLoggerMiddleware())
+	}
 
 	if err := r.SetTrustedProxies([]string{allowedHosts}); err != nil {
 		logger.Errorf("Can't set trusted proxies")
 	}
 
-	r.Use(gin.Recovery())
 	r.Use(middlewares.CORSMiddleware())
 
 	RegisterRoutes(r)

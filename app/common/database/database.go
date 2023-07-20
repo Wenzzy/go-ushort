@@ -2,10 +2,11 @@ package database
 
 import (
 	"github.com/pressly/goose/v3"
-	"go-ushorter/app/config"
+	"go-ushort/app/common/logger"
+	"go-ushort/app/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gormLogger "gorm.io/gorm/logger"
 	"log"
 	"os"
 	"path/filepath"
@@ -20,16 +21,18 @@ func DbConnection(DSN string) (*gorm.DB, error) {
 	var db = DB
 	cfg := config.GetCfg()
 
-	logLevel := logger.Silent
+	logLevel := gormLogger.Silent
 
 	if cfg.Database.LogMode || cfg.Server.IsDebug {
-		logLevel = logger.Info
+		logLevel = gormLogger.Info
 	}
 
 	db, err = gorm.Open(postgres.Open(DSN), &gorm.Config{
 		TranslateError: true,
-		Logger:         logger.Default.LogMode(logLevel),
+		Logger:         gormLogger.Default.LogMode(logLevel),
 	})
+
+	logger.Infof("Test val, %v", err)
 
 	// if need use replicas:
 	//if cfg.Database.LogMode || cfg.Server.IsDebug {
@@ -61,7 +64,7 @@ func DbConnection(DSN string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if err := goose.Up(sqlDB, filepath.Join(cwd, "app/common/database/migrations")); err != nil {
+	if err := goose.Up(sqlDB, filepath.Join(cwd, cfg.Database.MigrationsPath)); err != nil {
 		log.Fatalf("Message apply migrations")
 		return nil, err
 	}

@@ -191,14 +191,40 @@ const docTemplate = `{
                     "Links"
                 ],
                 "summary": "Get all links for user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit links per page",
+                        "name": "take",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/links.LinkResponse"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/db_utils.GetAllResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/links.LinkResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -308,16 +334,14 @@ const docTemplate = `{
         },
         "/{alias}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Links"
                 ],
                 "summary": "Redirect from alias to realLink",
                 "parameters": [
@@ -330,22 +354,13 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/links.CreatedLinkResponse"
-                        }
+                    "302": {
+                        "description": "Redirect"
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/utils.CommonError"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/utils.CommonValidationError"
                         }
                     }
                 }
@@ -393,6 +408,24 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 64,
                     "minLength": 8
+                }
+            }
+        },
+        "db_utils.GetAllResponse": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "data": {},
+                "took": {
+                    "type": "integer"
+                },
+                "totalCount": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
                 }
             }
         },
@@ -490,7 +523,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:80",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Go-Ushorter API",
+	Title:            "go-ushort API",
 	Description:      "This is a sample server for create short urls.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

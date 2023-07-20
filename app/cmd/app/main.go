@@ -1,15 +1,16 @@
 package main
 
 import (
-	"go-ushorter/app/common/database"
-	"go-ushorter/app/common/logger"
-	"go-ushorter/app/common/utils"
-	"go-ushorter/app/config"
-	"go-ushorter/app/routers"
+	"go-ushort/app/common/database"
+	"go-ushort/app/common/logger"
+	"go-ushort/app/common/utils"
+	"go-ushort/app/config"
+	"go-ushort/app/routers"
+	"log"
 	"time"
 )
 
-//	@title			Go-Ushorter API
+//	@title			go-ushort API
 //	@version		1.0
 //	@description	This is a sample server for create short urls.
 
@@ -29,9 +30,10 @@ import (
 
 func main() {
 
-	if err := config.SetupConfig(); err != nil {
-		logger.Fatalf("config SetupConfig() error: %s", err)
+	if err := config.SetupConfig("configs/.env"); err != nil {
+		log.Fatalf("config SetupConfig() error: %s", err)
 	}
+	logger.InitLogger()
 
 	cfg := config.GetCfg()
 
@@ -44,7 +46,7 @@ func main() {
 		logger.Fatalf("database DbConnection error: %s", err)
 	}
 
-	router := routers.SetupRoute()
+	router := routers.SetupRouter()
 	utils.SetupValidatorOptions()
 	logger.Fatalf("%v", router.Run(config.GetRunServerConfig()))
 }

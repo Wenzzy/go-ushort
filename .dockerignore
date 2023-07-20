@@ -16,5 +16,9 @@
 
 vendor
 tmp
+dist
+deploy
 
 README.md
+
+**/.DS_Store

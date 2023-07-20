@@ -18,3 +18,8 @@ configs/.env
 vendor/
 .vscode/
 tmp/
+dist/
+deploy/development/metrics/vm-storage
+deploy/development/metrics/grafana/data
+
+**/.DS_Store

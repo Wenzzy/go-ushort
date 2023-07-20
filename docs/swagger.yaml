@@ -29,6 +29,18 @@ definitions:
     - email
     - password
     type: object
+  db_utils.GetAllResponse:
+    properties:
+      currentPage:
+        type: integer
+      data: {}
+      took:
+        type: integer
+      totalCount:
+        type: integer
+      totalPages:
+        type: integer
+    type: object
   links.CreatedLinkResponse:
     properties:
       alias:
@@ -90,7 +102,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: Go-Ushorter API
+  title: go-ushort API
   version: "1.0"
 paths:
   /{alias}:
@@ -106,21 +118,15 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/links.CreatedLinkResponse'
-        "400":
-          description: Bad Request
+        "302":
+          description: Redirect
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/utils.CommonError'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/utils.CommonValidationError'
-      security:
-      - BearerAuth: []
       summary: Redirect from alias to realLink
+      tags:
+      - Links
   /auth/login:
     post:
       consumes:
@@ -222,15 +228,29 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: Limit links per page
+        in: query
+        name: take
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/links.LinkResponse'
-            type: array
+            allOf:
+            - $ref: '#/definitions/db_utils.GetAllResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/links.LinkResponse'
+                  type: array
+              type: object
       security:
       - BearerAuth: []
       summary: Get all links for user

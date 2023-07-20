@@ -6,7 +6,7 @@ Accept: application/json
 
 
 # Get all links (with auth)
-GET {{baseUrl}}/links
+GET {{baseUrl}}/links?page=2&take=10
 Accept: application/json
 Authorization: Bearer {{accessToken}}
 

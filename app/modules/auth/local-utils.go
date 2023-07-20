@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xhit/go-str2duration/v2"
-	"go-ushorter/app/config"
+	"go-ushort/app/config"
 )
 
 func SetRefreshToContext(c *gin.Context, refreshToken string) error {

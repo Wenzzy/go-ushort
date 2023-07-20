@@ -2,11 +2,11 @@ package links
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushorter/app/common/constants/emsgs"
-	"go-ushorter/app/common/database"
-	db_utils "go-ushorter/app/common/db-utils"
-	"go-ushorter/app/common/utils"
-	"go-ushorter/app/models"
+	"go-ushort/app/common/constants/emsgs"
+	"go-ushort/app/common/database"
+	db_utils "go-ushort/app/common/db-utils"
+	"go-ushort/app/common/utils"
+	"go-ushort/app/models"
 	"net/http"
 )
 
@@ -18,16 +18,42 @@ import (
 //	@Accept		json
 //	@Produce	json
 //	@Security	BearerAuth
-//	@Success	200	{object}	[]LinkResponse
+//	@Param		take	query		int	false	"Limit links per page"
+//	@Param		page	query		int	false	"Page number"
+//	@Success	200		{object}	db_utils.GetAllResponse{data=[]LinkResponse}
 //	@Router		/links [get]
 func GetAll(c *gin.Context) {
 
-	links, err := models.FindAllLinks(&models.LinkModel{UserID: c.MustGet("userId").(uint)})
+	pag := db_utils.GenPagination(c)
+	db := database.GetDB()
+
+	var links []models.LinkModel
+	var linksCount int64
+
+	qb := db.
+		Model(&models.LinkModel{}).
+		Where(&models.LinkModel{UserID: c.MustGet("userId").(uint)})
+
+	err := qb.Count(&linksCount).Error
+	err = qb.
+		Limit(pag.Take).
+		Offset(pag.Offset).
+		Order("id asc").
+		Find(&links).
+		Error
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, utils.NewError(emsgs.Internal))
+		return
 	}
 
-	sz := LinksSerializer{c, links}
+	sz := LinksSerializer{
+		C:           c,
+		Links:       links,
+		Took:        pag.Take,
+		TotalCount:  linksCount,
+		CurrentPage: pag.Page,
+	}
 	res := sz.Response()
 
 	c.JSON(http.StatusOK, res)
@@ -130,13 +156,12 @@ func Update(c *gin.Context) {
 //
 //	@Summary	Redirect from alias to realLink
 //	@Schemes
+//	@Tags		Links
 //	@Accept		json
 //	@Produce	json
-//	@Security	BearerAuth
-//	@Param		alias	path		string	true	"Short URL Alias"
-//	@Success	200		{object}	CreatedLinkResponse
-//	@Failure	422		{object}	utils.CommonValidationError
-//	@Failure	400		{object}	utils.CommonError
+//	@Param		alias	path	string	true	"Short URL Alias"
+//	@Success	302		"Redirect"
+//	@Failure	404		{object}	utils.CommonError
 //	@BasePath	/
 //	@Router		/{alias} [get]
 func Redirect(c *gin.Context) {
@@ -148,8 +173,8 @@ func Redirect(c *gin.Context) {
 	var link *models.LinkModel
 
 	db := database.GetDB()
-	db.Where(&models.LinkModel{GeneratedAlias: uri.Alias}).First(&link)
-	if link == nil {
+
+	if err := db.Where(&models.LinkModel{GeneratedAlias: uri.Alias}).First(&link).Error; err != nil {
 		c.JSON(http.StatusNotFound, utils.NewError(emsgs.ObjectNotFound, "alias"))
 		return
 	}
