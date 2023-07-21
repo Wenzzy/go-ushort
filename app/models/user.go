@@ -7,6 +7,7 @@ import (
 	"go-ushort/app/common/utils"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"net/http"
 	"time"
 )
 
@@ -48,7 +49,8 @@ func FindOneUser(condition any) (UserModel, *utils.CommonError) {
 		return model, nil
 	}
 	if errors.Is(err, gorm.ErrDuplicatedKey) {
-		return model, utils.NewError(emsgs.ObjectAlreadyExists, "user")
+		return model, utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "user")
 	}
-	return model, utils.NewError(emsgs.Internal)
+
+	return model, utils.NewError(http.StatusInternalServerError, emsgs.Internal, "find-user")
 }

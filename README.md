@@ -58,16 +58,16 @@ gr
 
 #### Database config
 
-| param             | type      | required | default                              | description                                                      |
--------------------|-----------|----------|--------------------------------------|------------------------------------------------------------------|
-| `DB_NAME`         | `string`  | `yes`    | `-`                                  | DB name                                                          |
-| `DB_USER`         | `string`  | `yes`    | `-`                                  | DB user                                                          |
-| `DB_PASS`         | `string`  | `yes`    | `-`                                  | DB password                                                      |
-| `DB_HOST`         | `string`  | `no`     | `"localhost"`                        | DB host (ex.: "localhost")                                       |
-| `DB_PORT`         | `int`     | `no`     | `"5432"`                             | DB port   (ex.: "5432")                                          |
-| `DB_LOG_MODE`     | `boolean` | `no`     | `"false"`                            | Output SQL and other query information? (ex.: "true")            |
-| `DB_SSL_MODE`     | `string`  | `no`     | `"false"`                            | Use SSL mode (ex.: "disable", "enable")                          |
-| `MIGRATIONS_PATH` | `string`  | `no`     | `"./app/common/database/migrations"` | Migrations folder path (ex.: "./app/common/database/migrations") |
+| param             | type      | required | default                      | description                                                      |
+-------------------|-----------|----------|------------------------------|------------------------------------------------------------------|
+| `DB_NAME`         | `string`  | `yes`    | `-`                          | DB name                                                          |
+| `DB_USER`         | `string`  | `yes`    | `-`                          | DB user                                                          |
+| `DB_PASS`         | `string`  | `yes`    | `-`                          | DB password                                                      |
+| `DB_HOST`         | `string`  | `no`     | `localhost`                  | DB host (ex.: "localhost")                                       |
+| `DB_PORT`         | `int`     | `no`     | `5432`                       | DB port   (ex.: "5432")                                          |
+| `DB_LOG_MODE`     | `boolean` | `no`     | `false`                      | Output SQL and other query information? (ex.: "true")            |
+| `DB_SSL_MODE`     | `string`  | `no`     | `false`                      | Use SSL mode (ex.: "disable", "enable")                          |
+| `MIGRATIONS_PATH` | `string`  | `no`     | `./app/common/database/migrations` | Migrations folder path (ex.: "./app/common/database/migrations") |
 
 
 ### Database diagram

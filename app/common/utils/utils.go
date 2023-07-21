@@ -51,6 +51,7 @@ func msgForValidationTag(tag string) string {
 }
 
 type CommonError struct {
+	StatusCode  int    `json:"-"`
 	Message     string `json:"message"`
 	Description string `json:"description,omitempty"`
 }
@@ -63,18 +64,30 @@ func (ce *CommonError) Error() string {
 	return ce.Message
 }
 
-func NewValidatorError(err error) CommonValidationError {
-	res := CommonValidationError{}
-	res.Errors = make(map[string]string)
-	errs := err.(validator.ValidationErrors)
-	for _, v := range errs {
-		res.Errors[v.Field()] = msgForValidationTag(v.Tag())
-	}
-	return res
+func (ce *CommonError) H() (int, *CommonError) {
+	return ce.StatusCode, ce
 }
 
-func NewError(errMsg string, descriptionStrings ...string) *CommonError {
+func NewValidatorError(err error) CommonValidationError {
+
+	if reflect.TypeOf(err) == reflect.TypeOf(validator.ValidationErrors{}) {
+		res := CommonValidationError{}
+		res.Errors = make(map[string]string)
+		errs := err.(validator.ValidationErrors)
+		for _, v := range errs {
+			res.Errors[v.Field()] = msgForValidationTag(v.Tag())
+		}
+		return res
+	}
+	return CommonValidationError{
+		Errors: map[string]string{"body": emsgs.NotObject},
+	}
+
+}
+
+func NewError(statusCode int, errMsg string, descriptionStrings ...string) *CommonError {
 	res := CommonError{}
+	res.StatusCode = statusCode
 	res.Message = errMsg
 	if len(descriptionStrings) > 0 {
 		res.Description = strings.Join(descriptionStrings[:], ",")

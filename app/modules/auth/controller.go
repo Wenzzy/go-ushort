@@ -31,7 +31,7 @@ func Registration(c *gin.Context) {
 	}
 
 	if err := db_utils.SaveOne(&validator.UserModel, "user"); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, err)
+		c.JSON(err.H())
 		return
 	}
 	c.Set("userModel", validator.UserModel)
@@ -39,7 +39,8 @@ func Registration(c *gin.Context) {
 	res := sz.Response()
 
 	if err := SetRefreshToContext(c, res.RefreshToken); err != nil {
-		c.JSON(http.StatusInternalServerError, utils.NewError(emsgs.Internal, "Can't set refresh token"))
+
+		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal, "Can't set refresh token").H())
 		return
 	}
 	c.JSON(http.StatusCreated, res)
@@ -66,11 +67,11 @@ func Login(c *gin.Context) {
 	user, err := models.FindOneUser(&models.UserModel{Email: validator.Email})
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, utils.NewError(emsgs.WrongCredentials))
+		c.JSON(utils.NewError(http.StatusBadRequest, emsgs.WrongCredentials).H())
 		return
 	}
 	if user.ComparePassword(validator.Password) != nil {
-		c.JSON(http.StatusBadRequest, utils.NewError(emsgs.WrongCredentials))
+		c.JSON(utils.NewError(http.StatusBadRequest, emsgs.WrongCredentials).H())
 		return
 	}
 
@@ -78,7 +79,7 @@ func Login(c *gin.Context) {
 	sz := AuthSerializer{c}
 	res := sz.Response()
 	if err := SetRefreshToContext(c, res.RefreshToken); err != nil {
-		c.JSON(http.StatusInternalServerError, utils.NewError(emsgs.Internal, "Can't set refresh token"))
+		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal, "Can't set refresh token").H())
 		return
 	}
 	c.JSON(http.StatusCreated, res)
@@ -94,11 +95,11 @@ func Login(c *gin.Context) {
 //	@Success	200		{object}	AuthResponse
 //	@Failure	401		{object}	utils.CommonError
 //	@Param		cookie	header		string	true	"Cookie"	default(refresh_token="...")
-//	@Router		/auth/refresh [post]
+//	@Router		/auth/refresh [get]
 func Refresh(c *gin.Context) {
 	refreshToken, err := c.Request.Cookie("refreshToken")
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, utils.NewError(emsgs.Unauthorized))
+		c.JSON(utils.NewError(http.StatusUnauthorized, emsgs.Unauthorized).H())
 		return
 	}
 
@@ -111,18 +112,18 @@ func Refresh(c *gin.Context) {
 	})
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusUnauthorized, utils.NewError(emsgs.Unauthorized))
+		c.JSON(utils.NewError(http.StatusUnauthorized, emsgs.Unauthorized).H())
 		return
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		c.JSON(http.StatusUnauthorized, utils.NewError(emsgs.Unauthorized))
+		c.JSON(utils.NewError(http.StatusUnauthorized, emsgs.Unauthorized).H())
 		return
 	}
 	userId := uint(claims["id"].(float64))
 	user, cerr := models.FindOneUser(&models.UserModel{ID: userId})
 	if cerr != nil {
-		c.JSON(http.StatusBadRequest, utils.NewError(emsgs.WrongCredentials))
+		c.JSON(utils.NewError(http.StatusBadRequest, emsgs.WrongCredentials).H())
 		return
 	}
 
@@ -130,7 +131,7 @@ func Refresh(c *gin.Context) {
 	sz := AuthSerializer{c}
 	res := sz.Response()
 	if err := SetRefreshToContext(c, res.RefreshToken); err != nil {
-		c.JSON(http.StatusInternalServerError, utils.NewError(emsgs.Internal, "Can't set refresh token"))
+		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal, "Can't set refresh token").H())
 		return
 	}
 	c.JSON(http.StatusCreated, res)

@@ -8,7 +8,7 @@ import (
 )
 
 func Setup() {
-	if err := config.SetupConfig("../configs/tests.env"); err != nil {
+	if err := config.SetupConfig("../../configs/tests.env"); err != nil {
 		log.Fatalf("config SetupConfig() error: %s", err)
 	}
 	logger.InitLogger()

@@ -9,6 +9,7 @@ import (
 	"go-ushort/app/common/utils"
 	"go-ushort/app/models"
 	"gorm.io/gorm"
+	"net/http"
 	"strconv"
 )
 
@@ -19,9 +20,9 @@ func SaveOne(data any, descriptionStrings ...string) *utils.CommonError {
 		return nil
 	}
 	if errors.Is(err, gorm.ErrDuplicatedKey) {
-		return utils.NewError(emsgs.ObjectAlreadyExists, descriptionStrings...)
+		return utils.NewError(http.StatusBadRequest, emsgs.ObjectAlreadyExists)
 	}
-	return utils.NewError(emsgs.Internal)
+	return utils.NewError(http.StatusInternalServerError, emsgs.Internal)
 }
 
 func uniqueLinkAliasGenerator(db *gorm.DB, aliasLength int) string {

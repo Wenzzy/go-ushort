@@ -53,7 +53,17 @@ Content-Type: application/json
 ###
 
 # Refresh
-POST {{baseUrl}}/auth/refresh
+GET {{baseUrl}}/auth/refresh
 Accept: application/json
+
+
+###
+
+# Refresh
+DELETE {{baseUrl}}/auth/logout
+Accept: application/json
+
+
+
 
 

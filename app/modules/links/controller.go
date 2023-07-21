@@ -43,7 +43,7 @@ func GetAll(c *gin.Context) {
 		Error
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, utils.NewError(emsgs.Internal))
+		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal).H())
 		return
 	}
 
@@ -86,7 +86,7 @@ func Create(c *gin.Context) {
 	if err := db.Where(&models.LinkModel{RealUrl: validator.RealUrl}).First(&foundLink).Error; err == nil {
 		sz := CreatedLinkSerializer{c, *foundLink}
 		res := sz.Response()
-		c.JSON(http.StatusCreated, res)
+		c.JSON(http.StatusOK, res)
 		return
 	}
 
@@ -105,7 +105,7 @@ func Create(c *gin.Context) {
 	}
 	sz := CreatedLinkSerializer{c, *model}
 	res := sz.Response()
-	c.JSON(http.StatusOK, res)
+	c.JSON(http.StatusCreated, res)
 }
 
 // Update godoc
@@ -125,7 +125,7 @@ func Create(c *gin.Context) {
 func Update(c *gin.Context) {
 	uri := LinkUpdateUriValidator{}
 	if err := c.BindUri(&uri); err != nil {
-		c.JSON(http.StatusNotFound, utils.NewError(emsgs.ObjectNotFound, "link"))
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "link").H())
 		return
 	}
 	validator := NewLinkUpdateValidator()
@@ -141,12 +141,12 @@ func Update(c *gin.Context) {
 	db := database.GetDB()
 
 	if err := db.Where(searchLink).First(&foundLink).Error; err != nil {
-		c.JSON(http.StatusNotFound, utils.NewError(emsgs.ObjectNotFound, "link"))
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "link").H())
 		return
 	}
 
 	if err := db.Model(foundLink).Where(searchLink).Update("name", validator.Name).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, utils.NewError(emsgs.Internal, "Can't update link"))
+		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal, "Can't update link").H())
 		return
 	}
 	c.Status(http.StatusNoContent)
@@ -167,7 +167,7 @@ func Update(c *gin.Context) {
 func Redirect(c *gin.Context) {
 	uri := RedirectUriValidator{}
 	if err := c.BindUri(&uri); err != nil {
-		c.JSON(http.StatusNotFound, utils.NewError(emsgs.ObjectNotFound, "alias"))
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "alias").H())
 		return
 	}
 	var link *models.LinkModel
@@ -175,7 +175,7 @@ func Redirect(c *gin.Context) {
 	db := database.GetDB()
 
 	if err := db.Where(&models.LinkModel{GeneratedAlias: uri.Alias}).First(&link).Error; err != nil {
-		c.JSON(http.StatusNotFound, utils.NewError(emsgs.ObjectNotFound, "alias"))
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "alias").H())
 		return
 	}
 	c.Redirect(http.StatusFound, link.RealUrl)

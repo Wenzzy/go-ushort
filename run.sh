@@ -1,22 +1,27 @@
 #!/bin/bash
 
+DEV_DOCKER_COMPOSE_BASE_FILE_NAME="./deploy/development/docker-compose"
+DEV_DOCKER_ENV_BASE_FILE_NAME="./deploy/development/.env"
+DEV_ENV_BASE_FILE_PATH="./configs/.env"
+DOCKER_PROJECT_NAME="ushorter"
 
-DEV_COMPOSE_BASE_FILE_NAME="./deploy/development/docker-compose"
-DEV_ENV_BASE_FILE_NAME="./deploy/development/.env"
-PROJECT_NAME="ushorter"
+
+if [ -f ${DEV_ENV_BASE_FILE_PATH} ]; then
+    # only on dev
+    # shellcheck disable=SC1090
+    source ${DEV_ENV_BASE_FILE_PATH}
+fi
 
 MIGRATIONS_PATH="./app/common/database/migrations"
-MIGRATIONS_DB_URI="postgresql://dev_user:dev@localhost:5432/ushorter"
+MIGRATIONS_DB_URI="postgresql://${DB_USER:-dev_user}:${DB_PASS:-dev}@${DB_HOST:-localhost}:${DB_PORT:-5432}/${DB_NAME:-$DOCKER_PROJECT_NAME}"
 
-TESTS_DB_URI="postgresql://dev_user:dev@localhost:5432/ushorter"
-
+echo ${MIGRATIONS_DB_URI}
 ENTRYPOINT_FILE="./app/cmd/app/main.go"
 BUILT_FILE_PATH="./dist/"
-TESTS_PATH="./tests/"
 
 run_logs() {
   trap 'sh run.sh docker.stop' INT
-#  docker compose -p ${PROJECT_NAME} logs -f app
+#  docker compose -p ${DOCKER_PROJECT_NAME} logs -f app
   docker logs -f app
 }
 
@@ -61,19 +66,19 @@ EOF
 
 case $1 in
 'docker.all')
-  docker compose -f "${DEV_COMPOSE_BASE_FILE_NAME}.dev.yml" --env-file "${DEV_ENV_BASE_FILE_NAME}.dev" -p ${PROJECT_NAME} up -d -V --build --force-recreate
+  docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.dev.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d -V --build --force-recreate
   run_logs
   ;;
 'docker.all-nb')
-  docker compose -f "${DEV_COMPOSE_BASE_FILE_NAME}.dev.yml" --env-file "${DEV_ENV_BASE_FILE_NAME}.dev" -p ${PROJECT_NAME} up -d -V
+  docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.dev.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d -V
   run_logs
   ;;
 'docker.db')
-  docker compose -f "${DEV_COMPOSE_BASE_FILE_NAME}.db_only.yml" --env-file "${DEV_ENV_BASE_FILE_NAME}.dev" -p ${PROJECT_NAME} up -d --force-recreate;;
+  docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.db_only.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d --force-recreate;;
 'docker.db-metrics')
-  docker compose -f "${DEV_COMPOSE_BASE_FILE_NAME}.db_metrics_only.yml" --env-file "${DEV_ENV_BASE_FILE_NAME}.dev" -p ${PROJECT_NAME} up -d --force-recreate;;
+  docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.db_metrics_only.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d --force-recreate;;
 'docker.stop')
-  docker compose -p ${PROJECT_NAME} down;;
+  docker compose -p ${DOCKER_PROJECT_NAME} down;;
 'run')
   go run ${ENTRYPOINT_FILE};;
 'build')

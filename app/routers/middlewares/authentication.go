@@ -49,7 +49,7 @@ func AuthMiddleware(abortWithError bool) gin.HandlerFunc {
 		})
 		if err != nil {
 			if abortWithError {
-				c.JSON(http.StatusUnauthorized, utils.NewError(emsgs.Unauthorized))
+				c.JSON(utils.NewError(http.StatusUnauthorized, emsgs.Unauthorized).H())
 				c.Abort()
 			}
 			return
