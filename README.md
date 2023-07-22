@@ -2,6 +2,7 @@
  <img src='assets/logo.jpg' width='500'>
 </p>
 
+[![CI-CD pipeline](https://github.com/WenzzyX/go-ushort/actions/workflows/ci-cd.production.yml/badge.svg)](https://github.com/WenzzyX/go-ushort/actions/workflows/ci-cd.production.yml)
 &nbsp;\
 My pet project that shortens long links ;)\
 &nbsp;\
