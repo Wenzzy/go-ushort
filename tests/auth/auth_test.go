@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"go-ushort/app/routers"
-	"go-ushort/tests"
 	"net/http"
 	"net/http/httptest"
 	_ "regexp"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/wenzzyx/go-ushort/app/routers"
+	"github.com/wenzzyx/go-ushort/tests"
 )
 
 var r *gin.Engine
@@ -125,7 +126,7 @@ func TestLogin(t *testing.T) {
 
 func TestRefresh(t *testing.T) {
 	w := httptest.NewRecorder()
-	authParams, err := tests.RegisterForTest(r, "test2@tester.fsdf", mockPassword)
+	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
 	assert.Equal(t, nil, err)
 
 	req, _ := http.NewRequest("GET", basePath+"/refresh", nil)
@@ -155,7 +156,7 @@ func TestInvalidRefresh(t *testing.T) {
 func TestLogout(t *testing.T) {
 	w := httptest.NewRecorder()
 
-	authParams, err := tests.RegisterForTest(r, "test2@tester.fsdf", mockPassword)
+	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
 	assert.Equal(t, nil, err)
 
 	req, _ := http.NewRequest("DELETE", basePath+"/logout", nil)

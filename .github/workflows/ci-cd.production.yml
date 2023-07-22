@@ -1,0 +1,73 @@
+name: CI-CD pipeline
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+env:
+  DOCKER_REPO: ghcr.io
+  PROJECT_NAME: go-ushort
+  DEPLOY_TYPE: prod
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set Golang 18.10.0
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20.0"
+
+      - name: Install deps
+        run: |
+          sh run.sh install
+
+      - name: Run tests
+        run: |
+          sh run.sh test
+
+  get-docker-img-name:
+    name: Get Docker image name
+    runs-on: ubuntu-latest
+    needs: tests
+    outputs:
+      name: ${{ env.DOCKER_IMAGE_NAME }}
+    steps:
+      - id: actor
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ github.repository_owner }}
+
+      - name: Set docker image name
+        run: echo "DOCKER_IMAGE_NAME="ghcr.io/${{ steps.actor.outputs.lowercase }}/${{ env.PROJECT_NAME }}-${{ env.DEPLOY_TYPE }}"" >> $GITHUB_ENV
+
+  ci-cd:
+    name: CI-CD pipeline
+    runs-on: ubuntu-latest
+    needs: [tests, get-docker-img-name]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: creating image from repository
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          docker build \
+          -t ${{ needs.get-docker-img-name.outputs.name }}-server:latest \
+          -t ${{ needs.get-docker-img-name.outputs.name }}-server:${TAG_NAME} \
+          -f ./Dockerfile ./
+      - name: Pushing server image to ghcr
+        run: docker push ${{ needs.get-docker-img-name.outputs.name }}-server --all-tags

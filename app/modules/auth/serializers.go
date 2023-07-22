@@ -2,8 +2,8 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/utils"
-	"go-ushort/app/models"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/models"
 )
 
 type AuthSerializer struct {

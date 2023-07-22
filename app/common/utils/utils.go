@@ -2,17 +2,18 @@ package utils
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
-	"github.com/xhit/go-str2duration/v2"
-	"go-ushort/app/common/constants/emsgs"
-	"go-ushort/app/config"
 	"math/rand"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
+	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
+	"github.com/wenzzyx/go-ushort/app/config"
+	"github.com/xhit/go-str2duration/v2"
 )
 
 func GenAuthTokens(id uint) (string, string) {

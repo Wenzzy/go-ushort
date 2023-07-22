@@ -2,7 +2,7 @@ package links
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushort/app/routers/middlewares"
+	"github.com/wenzzyx/go-ushort/app/routers/middlewares"
 )
 
 func Router(route *gin.RouterGroup) {

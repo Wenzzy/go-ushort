@@ -1,4 +1,4 @@
-module go-ushort
+module github.com/wenzzyx/go-ushort
 
 go 1.20
 

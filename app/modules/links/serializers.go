@@ -2,8 +2,8 @@ package links
 
 import (
 	"github.com/gin-gonic/gin"
-	db_utils "go-ushort/app/common/db-utils"
-	"go-ushort/app/models"
+	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
+	"github.com/wenzzyx/go-ushort/app/models"
 )
 
 type LinkSerializer struct {

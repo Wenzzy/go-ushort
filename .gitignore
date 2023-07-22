@@ -17,12 +17,12 @@ configs/.env
 .idea/
 vendor/
 .vscode/
+tmp_schema
 tmp/
 dist/
 deploy/development/metrics/vm-storage
 deploy/development/metrics/grafana/data
 
 **/.DS_Store
-.github/workflows/ci-cd.production.yml
 .space
 Spacefile

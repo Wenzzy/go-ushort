@@ -2,14 +2,15 @@ package auth
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/constants/emsgs"
-	"go-ushort/app/common/db-utils"
-	"go-ushort/app/common/utils"
-	"go-ushort/app/config"
-	"go-ushort/app/models"
-	"net/http"
+	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
+	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/config"
+	"github.com/wenzzyx/go-ushort/app/models"
 )
 
 // Registration godoc

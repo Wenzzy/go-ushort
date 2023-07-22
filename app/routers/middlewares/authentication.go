@@ -2,15 +2,16 @@ package middlewares
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/constants/emsgs"
-	"go-ushort/app/common/database"
-	"go-ushort/app/common/utils"
-	"go-ushort/app/config"
-	"go-ushort/app/models"
 	"net/http"
 	"strings"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
+	"github.com/wenzzyx/go-ushort/app/common/database"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/config"
+	"github.com/wenzzyx/go-ushort/app/models"
 )
 
 func UpdateContextUserModel(c *gin.Context, userId uint) {

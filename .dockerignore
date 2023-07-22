@@ -1,5 +1,6 @@
 # Versioning and metadata
 .git
+.github
 .gitignore
 .dockerignore
 .idea
@@ -19,6 +20,8 @@ vendor
 tmp
 dist
 deploy
+bin
+tmp_schema
 
 Spacefile
 README.md

@@ -18,12 +18,12 @@ _ushort.bio - is not my domain, it's just an example_
 - [x] Add pagination for links
 - [x] Add a collection of metrics and a dashboard to monitor them (prom-app -> victoriametrics -> grafana)
 - [x] Add LICENSE
-- [ ] Write tests (_in progress_)
+- [x] Write tests
 - [ ] Configure dev_full docker-compose file
-- [ ] Configure CI/CD
+- [x] Configure CI/CD
 - [ ] Configure deploy (heroku or other service)
 - [ ] Link domain
-- [ ] Write the rules for making a contribution
+- [x] Write the rules for making a contribution
 
 For simple run scripts - make alias `alias gr="sh run.sh"`
 
@@ -71,4 +71,4 @@ gr
 
 
 ### Database diagram
-![DB-diagram image](assets/db_diagram.png)
+![DB-diagram image](assets/db-diagram/diagrams/summary/relationships.real.large.svg)

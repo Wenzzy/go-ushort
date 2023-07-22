@@ -2,12 +2,13 @@ package logger
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"go-ushort/app/config"
 	"path"
 	"runtime"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/wenzzyx/go-ushort/app/config"
 )
 
 var logger = logrus.New()

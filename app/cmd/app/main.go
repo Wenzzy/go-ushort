@@ -1,13 +1,14 @@
 package main
 
 import (
-	"go-ushort/app/common/database"
-	"go-ushort/app/common/logger"
-	"go-ushort/app/common/utils"
-	"go-ushort/app/config"
-	"go-ushort/app/routers"
 	"log"
 	"time"
+
+	"github.com/wenzzyx/go-ushort/app/common/database"
+	"github.com/wenzzyx/go-ushort/app/common/logger"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/config"
+	"github.com/wenzzyx/go-ushort/app/routers"
 )
 
 //	@title			go-ushort API

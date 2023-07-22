@@ -3,13 +3,14 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"go-ushort/app/modules/auth"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
+	"github.com/wenzzyx/go-ushort/app/modules/auth"
 )
 
-func RegisterForTest(r *gin.Engine, email, password string) (*auth.AuthResponse, error) {
+func authFn(r *gin.Engine, authRoute, email, password string) (*auth.AuthResponse, error) {
 	w := httptest.NewRecorder()
 
 	reqBody, _ := json.Marshal(map[string]any{
@@ -17,7 +18,7 @@ func RegisterForTest(r *gin.Engine, email, password string) (*auth.AuthResponse,
 		"password": password,
 	})
 
-	req, _ := http.NewRequest("POST", "/api/v1/auth/registration", bytes.NewBuffer(reqBody))
+	req, _ := http.NewRequest("POST", "/api/v1/auth"+authRoute, bytes.NewBuffer(reqBody))
 	req.Header.Set("Content-Type", "application/json")
 	r.ServeHTTP(w, req)
 
@@ -25,4 +26,13 @@ func RegisterForTest(r *gin.Engine, email, password string) (*auth.AuthResponse,
 
 	err := json.Unmarshal(w.Body.Bytes(), &resBody)
 	return resBody, err
+}
+
+// Run this on top function of test file
+func RegisterForTest(r *gin.Engine, email, password string) (*auth.AuthResponse, error) {
+	return authFn(r, "/registration", email, password)
+}
+
+func LoginForTest(r *gin.Engine, email, password string) (*auth.AuthResponse, error) {
+	return authFn(r, "/login", email, password)
 }

@@ -3,14 +3,15 @@ package db_utils
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/constants/emsgs"
-	"go-ushort/app/common/database"
-	"go-ushort/app/common/utils"
-	"go-ushort/app/models"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
+	"github.com/wenzzyx/go-ushort/app/common/database"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/models"
+	"gorm.io/gorm"
 )
 
 func SaveOne(data any, descriptionStrings ...string) *utils.CommonError {

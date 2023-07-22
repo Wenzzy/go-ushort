@@ -2,10 +2,10 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/logger"
-	"go-ushort/app/common/metrics"
-	"go-ushort/app/config"
-	"go-ushort/app/routers/middlewares"
+	"github.com/wenzzyx/go-ushort/app/common/logger"
+	"github.com/wenzzyx/go-ushort/app/common/metrics"
+	"github.com/wenzzyx/go-ushort/app/config"
+	"github.com/wenzzyx/go-ushort/app/routers/middlewares"
 )
 
 func SetupRouter() *gin.Engine {

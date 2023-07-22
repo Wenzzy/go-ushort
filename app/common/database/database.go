@@ -1,14 +1,15 @@
 package database
 
 import (
-	"github.com/pressly/goose/v3"
-	"go-ushort/app/config"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	gormLogger "gorm.io/gorm/logger"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/pressly/goose/v3"
+	"github.com/wenzzyx/go-ushort/app/config"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 var (

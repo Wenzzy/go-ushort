@@ -1,13 +1,14 @@
 package links
 
 import (
-	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/constants/emsgs"
-	"go-ushort/app/common/database"
-	db_utils "go-ushort/app/common/db-utils"
-	"go-ushort/app/common/utils"
-	"go-ushort/app/models"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
+	"github.com/wenzzyx/go-ushort/app/common/database"
+	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/models"
 )
 
 // GetAll godoc

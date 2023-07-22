@@ -2,13 +2,14 @@ package models
 
 import (
 	"errors"
-	"go-ushort/app/common/constants/emsgs"
-	"go-ushort/app/common/database"
-	"go-ushort/app/common/utils"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 	"net/http"
 	"time"
+
+	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
+	"github.com/wenzzyx/go-ushort/app/common/database"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type UserModel struct {

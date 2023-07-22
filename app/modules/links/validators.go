@@ -2,7 +2,7 @@ package links
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-ushort/app/common/utils"
+	"github.com/wenzzyx/go-ushort/app/common/utils"
 )
 
 type LinkCreateValidator struct {

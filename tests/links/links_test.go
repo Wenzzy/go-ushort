@@ -4,21 +4,24 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"go-ushort/app/routers"
-	"go-ushort/tests"
 	"net/http"
 	"net/http/httptest"
 	_ "regexp"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+
+	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
+	"github.com/wenzzyx/go-ushort/app/routers"
+	"github.com/wenzzyx/go-ushort/tests"
 )
 
 var r *gin.Engine
 
 var (
 	basePath     = "/api/v1/links"
-	mockEmail    = "tester@tt.ttest"
+	mockEmail    = "tester_links@tt.ttest"
 	mockPassword = "qwerty1234"
 )
 
@@ -51,7 +54,7 @@ func TestCreateLink(t *testing.T) {
 		},
 	}
 
-	authParams, err := tests.RegisterForTest(r, "test22231@tester.fsdf", mockPassword)
+	authParams, err := tests.RegisterForTest(r, mockEmail, mockPassword)
 	assert.Equal(t, nil, err)
 	for _, c := range cases {
 		w := httptest.NewRecorder()
@@ -66,7 +69,6 @@ func TestCreateLink(t *testing.T) {
 		r.ServeHTTP(w, req)
 		assert.Equal(t, c.StatusCode, w.Code)
 		if c.MustGetAlias {
-			fmt.Println(c, w.Code, w.Body.String())
 			var resBody *struct {
 				ID    uint   `json:"id"`
 				Alias string `json:"alias"`
@@ -75,6 +77,93 @@ func TestCreateLink(t *testing.T) {
 			assert.Equal(t, nil, err)
 			assert.NotEmpty(t, resBody.Alias)
 			generatedAlias = resBody.Alias
+
+		}
+
+	}
+}
+
+func TestUpdateLink(t *testing.T) {
+	cases := []struct {
+		ID                    int
+		Name                  string
+		StatusCode            int
+		MustUseAuthentication bool
+	}{
+		{
+			ID:                    1,
+			Name:                  "Test-link-22",
+			MustUseAuthentication: true,
+			StatusCode:            204,
+		},
+		{
+			ID:                    100,
+			Name:                  "Test-link-22",
+			MustUseAuthentication: true,
+			StatusCode:            404,
+		},
+		{
+			ID:                    100,
+			Name:                  "Test-link-22",
+			MustUseAuthentication: false,
+			StatusCode:            401,
+		},
+	}
+
+	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
+	assert.Equal(t, nil, err)
+	for _, c := range cases {
+		w := httptest.NewRecorder()
+		reqBody, _ := json.Marshal(map[string]any{
+			"name": c.Name,
+		})
+
+		req, _ := http.NewRequest("PATCH", fmt.Sprintf("%s/%d", basePath, c.ID), bytes.NewBuffer(reqBody))
+		if c.MustUseAuthentication {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authParams.AccessToken))
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		r.ServeHTTP(w, req)
+		assert.Equal(t, c.StatusCode, w.Code)
+	}
+}
+
+func TestGetAllLinks(t *testing.T) {
+	cases := []struct {
+		StatusCode            int
+		MustUseAuthentication bool
+		MustCheckTotalCount   bool
+	}{
+		{
+			StatusCode:            200,
+			MustUseAuthentication: true,
+			MustCheckTotalCount:   true,
+		},
+		{
+			StatusCode:            401,
+			MustUseAuthentication: false,
+			MustCheckTotalCount:   false,
+		},
+	}
+
+	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
+	assert.Equal(t, nil, err)
+	for _, c := range cases {
+		w := httptest.NewRecorder()
+
+		req, _ := http.NewRequest("GET", basePath+"/", nil)
+		if c.MustUseAuthentication {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authParams.AccessToken))
+		}
+		r.ServeHTTP(w, req)
+		assert.Equal(t, c.StatusCode, w.Code)
+		if c.MustCheckTotalCount {
+			var resBody *db_utils.GetAllResponse
+			err := json.Unmarshal(w.Body.Bytes(), &resBody)
+			assert.Equal(t, nil, err)
+			fmt.Println(w.Body.String())
+			assert.Greater(t, resBody.TotalCount, 0)
 
 		}
 

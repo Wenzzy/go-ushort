@@ -1,10 +1,11 @@
 package tests
 
 import (
-	"go-ushort/app/common/database"
-	"go-ushort/app/common/logger"
-	"go-ushort/app/config"
 	"log"
+
+	"github.com/wenzzyx/go-ushort/app/common/database"
+	"github.com/wenzzyx/go-ushort/app/common/logger"
+	"github.com/wenzzyx/go-ushort/app/config"
 )
 
 func Setup() {

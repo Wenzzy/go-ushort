@@ -4,9 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"go-ushort/app/modules/auth"
-	"go-ushort/app/modules/links"
-	"go-ushort/docs"
+	"github.com/wenzzyx/go-ushort/app/modules/auth"
+	"github.com/wenzzyx/go-ushort/app/modules/links"
+	"github.com/wenzzyx/go-ushort/docs"
 )
 
 func RegisterRoutes(r *gin.Engine) {

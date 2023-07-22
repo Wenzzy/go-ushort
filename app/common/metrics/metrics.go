@@ -1,10 +1,11 @@
 package metrics
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
-	"go-ushort/app/config"
-	"net/http"
+	"github.com/wenzzyx/go-ushort/app/config"
 )
 
 func InitMetrics(r *gin.Engine) {

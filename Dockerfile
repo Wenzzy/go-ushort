@@ -17,20 +17,20 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o app-binary .
+RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o ./dist/app-binary ./app/cmd/app/main.go
 
 # Start a new stage from scratch
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
-WORKDIR /root/
+WORKDIR /app
 
-# Copy the Pre-built binary file from the previous stage. Also copy config yml file
-COPY --from=builder /app/app-binary .
-COPY --from=builder /app/.env.example .env
+ADD https://github.com/pressly/goose/releases/download/v3.7.0/goose_linux_x86_64 /bin/goose
+RUN chmod +x /bin/goose
+COPY --from=builder /app/dist/app-binary ./
+COPY ./app/common/database/migrations ./migrations
+COPY ./scripts/prod.sh ./run.sh
 
-# Expose port 8080 to the outside world
-EXPOSE 8000
 
 #Command to run the executable
 CMD ["./app-binary"]
