@@ -24,3 +24,5 @@ deploy/development/metrics/grafana/data
 
 **/.DS_Store
 .github/workflows/ci-cd.production.yml
+.space
+Spacefile

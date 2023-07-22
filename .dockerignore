@@ -4,6 +4,7 @@
 .dockerignore
 .idea
 .vscode
+.space
 
 *.exe
 *.exe~
@@ -19,6 +20,7 @@ tmp
 dist
 deploy
 
+Spacefile
 README.md
 
 **/.DS_Store
