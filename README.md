@@ -24,6 +24,7 @@ _ushort.bio - is not my domain, it's just an example_
 - [ ] Configure deploy (heroku or other service)
 - [ ] Link domain
 - [x] Write the rules for making a contribution
+- [ ] Change db diagram svg generation (replace images)
 
 For simple run scripts - make alias `alias gr="sh run.sh"`
 
