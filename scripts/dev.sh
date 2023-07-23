@@ -24,20 +24,22 @@ Usage: $(basename "${BASH_SOURCE[0]}") arg1 [arg2...]
 
 Available options:
 
-docker.all        Run app with all needed services in docker (build required)
-docker.all-nb     Run app with all needed services in docker (NO-build)
-docker.db         Run database in docker only
-docker.db-metrics Run database and metrics (vm, grafana) in docker only
-docker.stop       Stop project docker-compose
-run               Run server
-build             build app (to folder: "./dist")
-install           install dependencies
-test              Run tests of app
-mg:r              Apply migrations
-mg:rv             Rollback migrations
-mg:c [name]       Create migration with [name]
-docs              Fmt comments and generate swagger docs static files
-db_diagram        Run database diagram generator (java required, database must be running)
+docker.dev        	Run app with all needed services without metrics in docker (build required)
+docker.dev-nb     	Run app with all needed services without metrics in docker (NO-build)
+docker.dev-full     Run app with all needed services in docker (build required)
+docker.dev-full-nb  Run app with all needed services in docker (NO-build)
+docker.db         	Run database in docker only
+docker.db-metrics 	Run database and metrics (vm, grafana) in docker only
+docker.stop       	Stop project docker-compose
+run               	Run server
+build             	build app (to folder: "./dist")
+install           	install dependencies
+test              	Run tests of app
+mg:r              	Apply migrations
+mg:rv             	Rollback migrations
+mg:c [name]       	Create migration with [name]
+docs              	Fmt comments and generate swagger docs static files
+db-diagram        	Run database diagram generator (java required, database must be running)
 
 EOF
 	exit
@@ -64,6 +66,14 @@ run_tests() {
 	docker volume rm postgres-tests-data
 }
 
+replace_image_tag() {
+	find ${DEV_DB_DIAGRAM_PATH} -type f -name "*.svg" | while read -r file; do
+		echo $file
+		sed -i '' -E 's/<image xlink:href="..\/..\/images\/primaryKeys\.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="([^"]*)" y="([^"]*)"\/>/<ellipse fill="#ede739" stroke="#ede739" rx="3.2" ry="3.2" cx="\1" cy="\2"\/>/g' $file
+		sed -i '' -E 's/<image xlink:href="..\/..\/images\/foreignKeys\.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="([^"]*)" y="([^"]*)"\/>/<ellipse fill="#a3a3a3" stroke="#a3a3a3" rx="3.2" ry="3.2" cx="\1" cy="\2"\/>/g' $file
+	done
+}
+
 generate_db_diagram() {
 	java \
 		-jar ./bin/schemaspy-6.2.3.jar \
@@ -77,25 +87,52 @@ generate_db_diagram() {
 		-imageformat svg \
 		-dp ./bin/postgresql-42.5.4.jar \
 		-s public
-	mv -f ./tmp_schema/diagrams ${DEV_DB_DIAGRAM_PATH}
-	mv -f ./tmp_schema/images ${DEV_DB_DIAGRAM_PATH}
+	rm -rf ${DEV_DB_DIAGRAM_PATH}/*
+	mv -f ./tmp_schema/diagrams/* ${DEV_DB_DIAGRAM_PATH}
 	rm -rf ./tmp_schema
+	replace_image_tag
+}
+run_docker_all() {
+	run_l=true
+	args_array=()
+
+	case $2 in
+	'rebuild')
+		args_array+=("-V" "--build" "--force-recreate")
+		;;
+	'db')
+		args_array+=("--force-recreate")
+		run_l=false
+		;;
+	*)
+		args_array+=("-V")
+		;;
+	esac
+	docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.$1.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d "${args_array[@]}"
+
+	if [ "$run_l" = true ]; then
+		run_logs
+	fi
 }
 
 case $1 in
-'docker.all')
-	docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.dev.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d -V --build --force-recreate
-	run_logs
+'docker.dev')
+	run_docker_all dev rebuild
 	;;
-'docker.all-nb')
-	docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.dev.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d -V
-	run_logs
+'docker.dev-nb')
+	run_docker_all dev
+	;;
+'docker.dev-full')
+	run_docker_all dev_full rebuild
+	;;
+'docker.dev-full-nb')
+	run_docker_all dev_full
 	;;
 'docker.db')
-	docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.db_only.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d --force-recreate
+	run_docker_all db_only db
 	;;
 'docker.db-metrics')
-	docker compose -f "${DEV_DOCKER_COMPOSE_BASE_FILE_NAME}.db_metrics_only.yml" --env-file "${DEV_DOCKER_ENV_BASE_FILE_NAME}.dev" -p ${DOCKER_PROJECT_NAME} up -d --force-recreate
+	run_docker_all db_metrics_only db
 	;;
 'docker.stop')
 	docker compose -p ${DOCKER_PROJECT_NAME} down
@@ -125,7 +162,7 @@ case $1 in
 	swag fmt -g ${ENTRYPOINT_FILE}
 	swag init --parseInternal --parseDepth 2 -g ${ENTRYPOINT_FILE}
 	;;
-'db_diagram')
+'db-diagram')
 	generate_db_diagram
 	;;
 *)

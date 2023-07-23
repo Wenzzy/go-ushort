@@ -170,6 +170,31 @@ func TestGetAllLinks(t *testing.T) {
 	}
 }
 
+func TestRedirect(t *testing.T) {
+	cases := []struct {
+		Alias      string
+		StatusCode int
+	}{
+		{
+			Alias:      generatedAlias,
+			StatusCode: 302,
+		},
+		{
+			Alias:      generatedAlias + "22222",
+			StatusCode: 404,
+		},
+	}
+
+	for _, c := range cases {
+		w := httptest.NewRecorder()
+
+		req, _ := http.NewRequest("GET", "/"+c.Alias, nil)
+		r.ServeHTTP(w, req)
+		assert.Equal(t, c.StatusCode, w.Code)
+
+	}
+}
+
 func init() {
 	tests.Setup()
 	r = routers.SetupRouter()

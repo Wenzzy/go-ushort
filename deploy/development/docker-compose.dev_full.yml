@@ -25,6 +25,33 @@ services:
       - './configs/pgadmin/pgadmin_servers.json:/pgadmin4/servers.json'
       - './configs/pgadmin/pgadmin_pgpass:/pgpass'
 
+  victoriametrics:
+    image: 'victoriametrics/victoria-metrics:v1.82.1'
+    container_name: "vm"
+    command:
+      - '--promscrape.config=/etc/prometheus/scr.yml'
+      - '--storageDataPath=/storage'
+      - '--httpListenAddr=:8428'
+    volumes:
+      - './metrics/scrape-configs/default.yml:/etc/prometheus/scr.yml'
+      - './metrics/vm-storage:/storage'
+    restart: always
+
+  grafana:
+    image: 'grafana/grafana:9.1.0'
+    container_name: 'grafana'
+    depends_on:
+      - "victoriametrics"
+    ports:
+      - '3000:3000'
+    volumes:
+      - './metrics/grafana/grafana.ini:/etc/grafana/grafana.ini'
+      - './metrics/grafana/data:/var/lib/grafana'
+      - './metrics/grafana/provisioning:/etc/grafana/provisioning'
+      - './metrics/grafana/dashboards:/var/lib/grafana/dashboards'
+      - './metrics/grafana/plugins:/var/lib/grafana/custom-plugins'
+    restart: always
+
   server:
     container_name: app
     build:

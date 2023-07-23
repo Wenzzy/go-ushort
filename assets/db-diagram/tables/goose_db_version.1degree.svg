@@ -20,7 +20,7 @@
 <text text-anchor="start" x="15.5" y="-155.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">goose_db_version</text>
 <text text-anchor="start" x="186.5437" y="-155.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
 <polygon fill="none" stroke="#000000" points="10.5,-125.2 10.5,-147.2 137.5,-147.2 137.5,-125.2 10.5,-125.2"/>
-<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="15.5" y="-142.2"/>
+<ellipse fill="#ede739" stroke="#ede739" rx="3.2" ry="3.2" cx="15.5" cy="-142.2"/>
 <text text-anchor="start" x="30.5" y="-132.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">id</text>
 <polygon fill="none" stroke="#000000" points="137.5,-125.2 137.5,-147.2 221.5,-147.2 221.5,-125.2 137.5,-125.2"/>
 <text text-anchor="start" x="140.5" y="-132.9" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">serial[10]</text>

@@ -20,12 +20,14 @@ _ushort.bio - is not my domain, it's just an example_
 - [x] Add a collection of metrics and a dashboard to monitor them (prom-app -> victoriametrics -> grafana)
 - [x] Add LICENSE
 - [x] Write tests
-- [ ] Configure dev_full docker-compose file
+- [x] Write the rules for making a contribution
+- [x] Change db diagram svg generation (replace images)
 - [x] Configure CI/CD
+- [x] Configure dev_full docker-compose 
+- [ ] Configure git-crypt
 - [ ] Configure deploy (heroku or other service)
 - [ ] Link domain
-- [x] Write the rules for making a contribution
-- [ ] Change db diagram svg generation (replace images)
+
 
 For simple run scripts - make alias `alias gr="sh run.sh"`
 
@@ -73,4 +75,4 @@ gr
 
 
 ### Database diagram
-![DB-diagram image](assets/db-diagram/diagrams/summary/relationships.real.large.svg)
+![DB-diagram image](assets/db-diagram/summary/relationships.real.large.svg)

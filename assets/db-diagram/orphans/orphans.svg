@@ -19,7 +19,7 @@
 <text text-anchor="start" x="15.5" y="-121.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">goose_db_version</text>
 <text text-anchor="start" x="186.5437" y="-121.1" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
 <polygon fill="none" stroke="#000000" points="10.5,-91 10.5,-113 137.5,-113 137.5,-91 10.5,-91"/>
-<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="15.5" y="-108"/>
+<ellipse fill="#ede739" stroke="#ede739" rx="3.2" ry="3.2" cx="15.5" cy="-108"/>
 <text text-anchor="start" x="30.5" y="-98.1" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">id</text>
 <polygon fill="none" stroke="#000000" points="137.5,-91 137.5,-113 221.5,-113 221.5,-91 137.5,-91"/>
 <text text-anchor="start" x="140.5" y="-98.7" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">serial[10]</text>

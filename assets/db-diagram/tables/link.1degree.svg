@@ -20,7 +20,7 @@
 <text text-anchor="start" x="160.2517" y="-238.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">link</text>
 <text text-anchor="start" x="323.5437" y="-237.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
 <polygon fill="none" stroke="#000000" points="155.5,-207.7 155.5,-229.7 266.5,-229.7 266.5,-207.7 155.5,-207.7"/>
-<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="160.5" y="-224.7"/>
+<ellipse fill="#ede739" stroke="#ede739" rx="3.2" ry="3.2" cx="160.5" cy="-224.7"/>
 <text text-anchor="start" x="175.5" y="-214.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">id</text>
 <polygon fill="none" stroke="#000000" points="266.5,-207.7 266.5,-229.7 358.5,-229.7 358.5,-207.7 266.5,-207.7"/>
 <text text-anchor="start" x="269.5" y="-215.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">serial[10]</text>
@@ -43,7 +43,7 @@
 <polygon fill="none" stroke="#000000" points="266.5,-119.7 266.5,-141.7 358.5,-141.7 358.5,-119.7 266.5,-119.7"/>
 <text text-anchor="start" x="269.1023" y="-127.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">timestamptz[35,6]</text>
 <polygon fill="none" stroke="#000000" points="155.5,-97.7 155.5,-119.7 266.5,-119.7 266.5,-97.7 155.5,-97.7"/>
-<image xlink:href="../../images/foreignKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="160.5" y="-114.7"/>
+<ellipse fill="#a3a3a3" stroke="#a3a3a3" rx="3.2" ry="3.2" cx="160.5" cy="-114.7"/>
 <text text-anchor="start" x="175.5" y="-104.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">user_id</text>
 <polygon fill="none" stroke="#000000" points="266.5,-97.7 266.5,-119.7 358.5,-119.7 358.5,-97.7 266.5,-97.7"/>
 <text text-anchor="start" x="269.5" y="-105.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">int4[10]</text>
@@ -70,7 +70,7 @@
 <text text-anchor="start" x="12.8042" y="-128.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">user</text>
 <text text-anchor="start" x="69.0437" y="-127.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
 <polygon fill="none" stroke="#000000" points="8,-97.7 8,-119.7 104,-119.7 104,-97.7 8,-97.7"/>
-<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="13" y="-114.7"/>
+<ellipse fill="#ede739" stroke="#ede739" rx="3.2" ry="3.2" cx="13" cy="-114.7"/>
 <text text-anchor="start" x="28" y="-104.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">id</text>
 <polygon fill="#ffffff" stroke="transparent" points="8,-75.7 8,-97.7 104,-97.7 104,-75.7 8,-75.7"/>
 <polygon fill="none" stroke="#000000" points="8,-75.7 8,-97.7 104,-97.7 104,-75.7 8,-75.7"/>
