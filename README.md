@@ -38,6 +38,40 @@ gr
 # Get list of scripts and description for each script
 ```
 
+```shell
+docker build . \
+	--platform=linux/amd64 \
+	-t go-ushort \
+	--build-arg NEXT_PUBLIC_USHORT_DOMAIN="ushort.bio"
+# build for amd64
+
+docker build . -t go-ushort
+# build docker image
+```
+
+```shell
+docker rm go-ushort && \
+docker run -it -p 5005:8000 \
+	--name go-ushort \
+	-e ALLOWED_ORIGINS="https://go-ushort.vercel.app" \
+	-e DB_HOST="localhost" \
+	-e DB_NAME="ushorter" \
+	-e DB_PASS="dev" \
+	-e DB_PORT="5432" \
+	-e DB_USER="dev_user" \
+	-e DOMAIN="ushort.onrender.com" \
+	-e IS_DEBUG="false" \
+	-e IS_ENABLE_PROM="false" \
+	-e IS_PRODUCTION="true" \
+	-e JWT_ACCESS_EXP_TIME="1m" \
+	-e JWT_ACCESS_SECRET="ocSbpF5qQjBbutPR85g7VHfQn1v7dGYO0IVEoH9xq2hmWDa6bVxX8NWk6OcpdEZN" \
+	-e JWT_REFRESH_EXP_TIME="30d" \
+	-e JWT_REFRESH_SECRET="mwgqOZsFf8hWNdOtbKQQLGPhwWXQQQ0hHOKZvypj82uJuENwjNPqXLBMdKRYsqBq" \
+	go-ushort \
+	&& docker logs -f go-ushort
+# run docker container
+```
+
 ### Environment
 
 #### Server config

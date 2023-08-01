@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
@@ -59,10 +60,28 @@ func SetupConfig(configPath string) error {
 	viper.SetDefault("DB_HOST", "localhost")
 	viper.SetDefault("DB_PORT", "5432")
 	viper.SetDefault("MIGRATIONS_PATH", "./app/common/database/migrations")
+	viper.BindEnv("DOMAIN")
+	viper.BindEnv("JWT_ACCESS_SECRET")
+	viper.BindEnv("JWT_ACCESS_EXP_TIME")
+	viper.BindEnv("JWT_REFRESH_SECRET")
+	viper.BindEnv("JWT_REFRESH_EXP_TIME")
+	viper.BindEnv("DB_NAME")
+	viper.BindEnv("DB_USER")
+	viper.BindEnv("DB_PASS")
 
 	viper.AutomaticEnv()
-	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("Message to reading config file: %v", err)
+
+	if configPath != "" {
+		// Check if the file exists
+		if _, err := os.Stat(configPath); os.IsNotExist(err) {
+			log.Printf("Config file '%s' does not exist, reading configuration from environment variables.", configPath)
+		} else {
+			viper.SetConfigFile(configPath)
+
+			if err := viper.ReadInConfig(); err != nil {
+				log.Printf("Error reading config file: %v", err)
+			}
+		}
 	}
 
 	if err := viper.Unmarshal(&configuration); err != nil {
