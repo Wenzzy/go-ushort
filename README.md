@@ -6,8 +6,12 @@
 &nbsp;\
 My pet project that shortens long links ;)\
 &nbsp;\
+Front-end: [go-ushort](https://github.com/WenzzyX/frontend-ushort)\
+Design: [figma](https://www.figma.com/community/file/1267929060708092881)
+&nbsp;\
+&nbsp;\
 _`https://very-long-site-subdomain.long-domain-ffff.com/my-best-blog`_ \
--> `https://ushort.us/g32d` \
+-> `https://ushort.us/7R`
 
 ## Todo
 
@@ -41,7 +45,7 @@ gr
 docker build . \
 	--platform=linux/amd64 \
 	-t go-ushort \
-	--build-arg NEXT_PUBLIC_USHORT_DOMAIN="ushort.bio"
+	--build-arg NEXT_PUBLIC_USHORT_DOMAIN="ushort.us"
 # build for amd64
 
 docker build . -t go-ushort
@@ -87,7 +91,7 @@ docker run -it -p 5005:8000 \
 | `IS_ENABLE_PROM`          | `boolean` | `no`     | `false`   | Enable prometheus? (ex.: "false")                                |
 | `DOMAIN`                  | `string`  | `yes`    | `-`       | Domain for setting cookies (ex.: "localhost")                    |
 | `ALLOWED_HOSTS`           | `string`  | `no`     | `0.0.0.0` | Hosts who can send requst to server (ex.: "0.0.0.0,192.168.1.1") |
-| `ALLOWED_ORIGINS`         | `string`  | `no`     | `*`       | CORS - origin (ex.: "https://ushort.bio,http://localhost:3000")  |
+| `ALLOWED_ORIGINS`         | `string`  | `no`     | `*`       | CORS - origin (ex.: "https://ushort.us,http://localhost:3000")   |
 | `SERVER_HOST`             | `string`  | `no`     | `0.0.0.0` | Host, where server will run (ex.: "0.0.0.0")                     |
 | `LIMIT_COUNT_PER_REQUEST` | `int`     | `no`     | `10`      | _Temporarly not using_                                           |
 
