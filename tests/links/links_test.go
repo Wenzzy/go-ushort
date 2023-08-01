@@ -63,7 +63,7 @@ func TestCreateLink(t *testing.T) {
 			"realUrl": c.RealUrl,
 		})
 
-		req, _ := http.NewRequest("POST", basePath+"/", bytes.NewBuffer(reqBody))
+		req, _ := http.NewRequest("POST", basePath, bytes.NewBuffer(reqBody))
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authParams.AccessToken))
 		req.Header.Set("Content-Type", "application/json")
 		r.ServeHTTP(w, req)
@@ -129,6 +129,45 @@ func TestUpdateLink(t *testing.T) {
 	}
 }
 
+func TestGetOneLink(t *testing.T) {
+	cases := []struct {
+		ID                    int
+		StatusCode            int
+		MustUseAuthentication bool
+	}{
+		{
+			ID:                    1,
+			MustUseAuthentication: true,
+			StatusCode:            200,
+		},
+		{
+			ID:                    100,
+			MustUseAuthentication: true,
+			StatusCode:            404,
+		},
+		{
+			ID:                    100,
+			MustUseAuthentication: false,
+			StatusCode:            401,
+		},
+	}
+
+	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
+	assert.Equal(t, nil, err)
+	for _, c := range cases {
+		w := httptest.NewRecorder()
+
+		req, _ := http.NewRequest("GET", fmt.Sprintf("%s/%d", basePath, c.ID), nil)
+		if c.MustUseAuthentication {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authParams.AccessToken))
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		r.ServeHTTP(w, req)
+		assert.Equal(t, c.StatusCode, w.Code)
+	}
+}
+
 func TestGetAllLinks(t *testing.T) {
 	cases := []struct {
 		StatusCode            int
@@ -152,7 +191,7 @@ func TestGetAllLinks(t *testing.T) {
 	for _, c := range cases {
 		w := httptest.NewRecorder()
 
-		req, _ := http.NewRequest("GET", basePath+"/", nil)
+		req, _ := http.NewRequest("GET", basePath, nil)
 		if c.MustUseAuthentication {
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authParams.AccessToken))
 		}
@@ -192,6 +231,45 @@ func TestRedirect(t *testing.T) {
 		r.ServeHTTP(w, req)
 		assert.Equal(t, c.StatusCode, w.Code)
 
+	}
+}
+
+func TestDeleteLink(t *testing.T) {
+	cases := []struct {
+		ID                    int
+		StatusCode            int
+		MustUseAuthentication bool
+	}{
+		{
+			ID:                    1,
+			MustUseAuthentication: true,
+			StatusCode:            204,
+		},
+		{
+			ID:                    100,
+			MustUseAuthentication: true,
+			StatusCode:            404,
+		},
+		{
+			ID:                    100,
+			MustUseAuthentication: false,
+			StatusCode:            401,
+		},
+	}
+
+	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
+	assert.Equal(t, nil, err)
+	for _, c := range cases {
+		w := httptest.NewRecorder()
+
+		req, _ := http.NewRequest("DELETE", fmt.Sprintf("%s/%d", basePath, c.ID), nil)
+		if c.MustUseAuthentication {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authParams.AccessToken))
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		r.ServeHTTP(w, req)
+		assert.Equal(t, c.StatusCode, w.Code)
 	}
 }
 

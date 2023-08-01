@@ -1,7 +1,10 @@
 package links
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
+
 	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
 	"github.com/wenzzyx/go-ushort/app/models"
 )
@@ -25,7 +28,7 @@ func (s *LinkSerializer) Response() LinkResponse {
 		*s.Name,
 		s.RealUrl,
 		s.GeneratedAlias,
-		s.CreatedAt.String(),
+		s.CreatedAt.Format(time.RFC3339),
 	}
 }
 
@@ -45,7 +48,7 @@ func (s *LinksSerializer) Response() db_utils.GetAllResponse {
 			*lm.Name,
 			lm.RealUrl,
 			lm.GeneratedAlias,
-			lm.CreatedAt.String(),
+			lm.CreatedAt.Format(time.RFC3339),
 		})
 	}
 	getAllSrz := db_utils.GetAllSerializer{

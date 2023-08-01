@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
-	"log"
 )
 
 type ServerConfiguration struct {
@@ -12,6 +13,7 @@ type ServerConfiguration struct {
 	IsEnableProm         bool   `mapstructure:"IS_ENABLE_PROM"`
 	IsDebug              bool   `mapstructure:"IS_DEBUG"`
 	AllowedHosts         string `mapstructure:"ALLOWED_HOSTS"`
+	AllowedOrigins       string `mapstructure:"ALLOWED_ORIGINS"`
 	Domain               string `mapstructure:"DOMAIN" validate:"required"`
 	Host                 string `mapstructure:"SERVER_HOST"`
 	Port                 string `mapstructure:"SERVER_PORT"`
@@ -50,6 +52,7 @@ func SetupConfig(configPath string) error {
 	viper.SetDefault("IS_DEBUG", false)
 	viper.SetDefault("IS_ENABLE_PROM", true)
 	viper.SetDefault("ALLOWED_HOSTS", "0.0.0.0")
+	viper.SetDefault("ALLOWED_ORIGINS", "*")
 	viper.SetDefault("SERVER_HOST", "0.0.0.0")
 	viper.SetDefault("SERVER_PORT", "8000")
 	viper.SetDefault("SERVER_TIMEZONE", "Europe/Berlin")

@@ -55,6 +55,7 @@ definitions:
         type: string
       realUrl:
         maxLength: 2000
+        minLength: 5
         type: string
     required:
     - realUrl
@@ -175,7 +176,7 @@ paths:
       tags:
       - Auth
   /auth/refresh:
-    post:
+    get:
       consumes:
       - application/json
       parameters:
@@ -287,6 +288,54 @@ paths:
       tags:
       - Links
   /links/{linkId}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Link ID
+        in: path
+        name: linkId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Empty response
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Delete link
+      tags:
+      - Links
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Link ID
+        in: path
+        name: linkId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/links.LinkResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.CommonError'
+      security:
+      - BearerAuth: []
+      summary: Get one link
+      tags:
+      - Links
     patch:
       consumes:
       - application/json

@@ -7,6 +7,6 @@ import (
 func Router(route *gin.RouterGroup) {
 	route.POST("/registration", Registration)
 	route.POST("/login", Login)
-	route.GET("/refresh", Refresh)
+	route.POST("/refresh", Refresh)
 	route.DELETE("/logout", Logout)
 }

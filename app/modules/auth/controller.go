@@ -6,6 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+
 	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
 	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
 	"github.com/wenzzyx/go-ushort/app/common/utils"
@@ -98,13 +99,23 @@ func Login(c *gin.Context) {
 //	@Param		cookie	header		string	true	"Cookie"	default(refresh_token="...")
 //	@Router		/auth/refresh [get]
 func Refresh(c *gin.Context) {
-	refreshToken, err := c.Request.Cookie("refreshToken")
+	refreshTokenCookie, err := c.Request.Cookie("refreshToken")
+
+	refreshToken := ""
+
+	validator := NewRefreshValidator()
+	_ = validator.Bind(c)
 	if err != nil {
+		refreshToken = validator.Token
+	} else {
+		refreshToken = refreshTokenCookie.Value
+	}
+
+	if refreshToken == "" {
 		c.JSON(utils.NewError(http.StatusUnauthorized, emsgs.Unauthorized).H())
 		return
 	}
-
-	token, err := jwt.Parse(refreshToken.Value, func(token *jwt.Token) (any, error) {
+	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}

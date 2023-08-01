@@ -2,12 +2,13 @@ package links
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/wenzzyx/go-ushort/app/common/utils"
 )
 
 type LinkCreateValidator struct {
 	Name    string `json:"name" binding:"max=150"`
-	RealUrl string `json:"realUrl" binding:"required,max=2000"`
+	RealUrl string `json:"realUrl" binding:"required,url,min=5,max=2000"`
 }
 
 func (v *LinkCreateValidator) Bind(c *gin.Context) error {

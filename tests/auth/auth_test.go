@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+
 	"github.com/wenzzyx/go-ushort/app/routers"
 	"github.com/wenzzyx/go-ushort/tests"
 )
@@ -129,7 +130,7 @@ func TestRefresh(t *testing.T) {
 	authParams, err := tests.LoginForTest(r, mockEmail, mockPassword)
 	assert.Equal(t, nil, err)
 
-	req, _ := http.NewRequest("GET", basePath+"/refresh", nil)
+	req, _ := http.NewRequest("POST", basePath+"/refresh", nil)
 	req.Header.Set("Cookie", fmt.Sprintf("refreshToken=%s; Path=/", authParams.RefreshToken))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 201, w.Code)
@@ -146,8 +147,8 @@ func TestRefresh(t *testing.T) {
 func TestInvalidRefresh(t *testing.T) {
 	w := httptest.NewRecorder()
 
-	req, _ := http.NewRequest("GET", basePath+"/refresh", nil)
-	req.Header.Set("Cookie", fmt.Sprintf("refreshToken=%s; Path=/", "not-valit-refresh-token"))
+	req, _ := http.NewRequest("POST", basePath+"/refresh", nil)
+	req.Header.Set("Cookie", fmt.Sprintf("refreshToken=%s; Path=/", "not-valid-refresh-token"))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 401, w.Code)
 

@@ -11,9 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/xhit/go-str2duration/v2"
+
 	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
 	"github.com/wenzzyx/go-ushort/app/config"
-	"github.com/xhit/go-str2duration/v2"
 )
 
 func GenAuthTokens(id uint) (string, string) {
@@ -46,6 +47,8 @@ func msgForValidationTag(tag string) string {
 		return emsgs.IsEmpty
 	case "email":
 		return emsgs.NotEmail
+	case "url":
+		return emsgs.NotURL
 
 	}
 	return fmt.Sprintf("unhandled-validation-tag:%s", tag)

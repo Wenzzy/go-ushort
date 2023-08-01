@@ -6,9 +6,10 @@ Accept: application/json
 
 
 # Get all links (with auth)
-GET {{baseUrl}}/links?page=2&take=10
+GET {{baseUrl}}/links
 Accept: application/json
 Authorization: Bearer {{accessToken}}
+Origin: http://localhost
 
 ###
 
@@ -34,3 +35,4 @@ Accept: application/json
 
 
 ###
+

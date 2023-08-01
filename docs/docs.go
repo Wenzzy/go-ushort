@@ -98,7 +98,7 @@ const docTemplate = `{
             }
         },
         "/auth/refresh": {
-            "post": {
+            "get": {
                 "consumes": [
                     "application/json"
                 ],
@@ -279,6 +279,83 @@ const docTemplate = `{
             }
         },
         "/links/{linkId}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Get one link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Link ID",
+                        "name": "linkId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/links.LinkResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links"
+                ],
+                "summary": "Delete link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Link ID",
+                        "name": "linkId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Empty response"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CommonError"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "security": [
                     {
@@ -452,7 +529,8 @@ const docTemplate = `{
                 },
                 "realUrl": {
                     "type": "string",
-                    "maxLength": 2000
+                    "maxLength": 2000,
+                    "minLength": 5
                 }
             }
         },

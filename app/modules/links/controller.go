@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/wenzzyx/go-ushort/app/common/constants/emsgs"
 	"github.com/wenzzyx/go-ushort/app/common/database"
 	db_utils "github.com/wenzzyx/go-ushort/app/common/db-utils"
@@ -58,6 +59,44 @@ func GetAll(c *gin.Context) {
 	res := sz.Response()
 
 	c.JSON(http.StatusOK, res)
+}
+
+// Update godoc
+//
+//	@Summary	Get one link
+//	@Schemes
+//	@Tags		Links
+//	@Accept		json
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		linkId	path		string	true	"Link ID"
+//	@Success	204		{object}	LinkResponse
+//	@Failure	404		{object}	utils.CommonError
+//	@Router		/links/{linkId} [get]
+func GetOne(c *gin.Context) {
+	uri := LinkUpdateUriValidator{}
+	if err := c.BindUri(&uri); err != nil {
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "link").H())
+		return
+	}
+
+	searchLink := &models.LinkModel{ID: uri.ID, UserID: c.MustGet("userId").(uint)}
+
+	var foundLink *models.LinkModel
+
+	db := database.GetDB()
+
+	if err := db.Where(searchLink).First(&foundLink).Error; err != nil {
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "link").H())
+		return
+	}
+
+	sz := LinkSerializer{c, *foundLink}
+	res := sz.Response()
+
+	c.JSON(http.StatusOK, res)
+
+	// c.Status(http.StatusNoContent)
 }
 
 // Create godoc
@@ -148,6 +187,42 @@ func Update(c *gin.Context) {
 
 	if err := db.Model(foundLink).Where(searchLink).Update("name", validator.Name).Error; err != nil {
 		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal, "Can't update link").H())
+		return
+	}
+	c.Status(http.StatusNoContent)
+}
+
+// Update godoc
+//
+//	@Summary	Delete link
+//	@Schemes
+//	@Tags		Links
+//	@Accept		json
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		linkId	path	string	true	"Link ID"
+//	@Success	204		"Empty response"
+//	@Failure	404		{object}	utils.CommonError
+//	@Router		/links/{linkId} [delete]
+func Delete(c *gin.Context) {
+	uri := LinkUpdateUriValidator{}
+	if err := c.BindUri(&uri); err != nil {
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "link").H())
+		return
+	}
+	searchLink := &models.LinkModel{ID: uri.ID, UserID: c.MustGet("userId").(uint)}
+
+	var foundLink *models.LinkModel
+
+	db := database.GetDB()
+
+	if err := db.Where(searchLink).First(&foundLink).Error; err != nil {
+		c.JSON(utils.NewError(http.StatusNotFound, emsgs.ObjectNotFound, "link").H())
+		return
+	}
+
+	if err := db.Delete(foundLink).Error; err != nil {
+		c.JSON(utils.NewError(http.StatusInternalServerError, emsgs.Internal, "Can't delete link").H())
 		return
 	}
 	c.Status(http.StatusNoContent)

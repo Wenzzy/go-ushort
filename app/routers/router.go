@@ -1,11 +1,15 @@
 package routers
 
 import (
+	"strings"
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	"github.com/wenzzyx/go-ushort/app/common/logger"
 	"github.com/wenzzyx/go-ushort/app/common/metrics"
 	"github.com/wenzzyx/go-ushort/app/config"
-	"github.com/wenzzyx/go-ushort/app/routers/middlewares"
 )
 
 func SetupRouter() *gin.Engine {
@@ -17,7 +21,6 @@ func SetupRouter() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	allowedHosts := cfg.Server.AllowedHosts
 	r := gin.New()
 
 	r.Use(gin.Recovery())
@@ -30,11 +33,18 @@ func SetupRouter() *gin.Engine {
 		r.Use(logger.JsonLoggerMiddleware())
 	}
 
-	if err := r.SetTrustedProxies([]string{allowedHosts}); err != nil {
+	if err := r.SetTrustedProxies([]string{cfg.Server.AllowedHosts}); err != nil {
 		logger.Errorf("Can't set trusted proxies")
 	}
 
-	r.Use(middlewares.CORSMiddleware())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     strings.Split(cfg.Server.AllowedOrigins, ","),
+		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	RegisterRoutes(r)
 

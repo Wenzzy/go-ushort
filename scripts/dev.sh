@@ -61,6 +61,7 @@ run_tests() {
 		-p 6543:5432 \
 		-v postgres-tests-data:/var/lib/postgresql/data \
 		-d postgres:15.2-alpine
+	sleep 10 # wait for postgres to start
 	go test ./...
 	docker stop postgres-tests
 	docker volume rm postgres-tests-data

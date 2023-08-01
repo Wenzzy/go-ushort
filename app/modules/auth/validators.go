@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/wenzzyx/go-ushort/app/common/utils"
 	"github.com/wenzzyx/go-ushort/app/models"
 )
@@ -44,5 +45,23 @@ func (v *LoginValidator) Bind(c *gin.Context) error {
 
 func NewLoginValidator() LoginValidator {
 	v := LoginValidator{}
+	return v
+}
+
+// ###
+
+type RefreshValidator struct {
+	Token string `json:"token" binding:""`
+}
+
+func (v *RefreshValidator) Bind(c *gin.Context) error {
+	if err := utils.Bind(c, v); err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewRefreshValidator() RefreshValidator {
+	v := RefreshValidator{}
 	return v
 }
