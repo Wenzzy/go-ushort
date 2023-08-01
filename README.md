@@ -7,8 +7,7 @@
 My pet project that shortens long links ;)\
 &nbsp;\
 _`https://very-long-site-subdomain.long-domain-ffff.com/my-best-blog`_ \
--> `https://ushort.bio/g32d` \
-_ushort.bio - is not my domain, it's just an example_
+-> `https://ushort.us/g32d` \
 
 ## Todo
 
@@ -24,9 +23,9 @@ _ushort.bio - is not my domain, it's just an example_
 - [x] Change db diagram svg generation (replace images)
 - [x] Configure CI/CD
 - [x] Configure dev_full docker-compose
+- [x] Configure deploy (render.com)
+- [x] Link domain
 - [ ] Configure git-crypt
-- [ ] Configure deploy (heroku or other service)
-- [ ] Link domain
 
 For simple run scripts - make alias `alias gr="sh run.sh"`
 
@@ -59,7 +58,7 @@ docker run -it -p 5005:8000 \
 	-e DB_PASS="dev" \
 	-e DB_PORT="5432" \
 	-e DB_USER="dev_user" \
-	-e DOMAIN="ushort.onrender.com" \
+	-e DOMAIN="ushort.us" \
 	-e IS_DEBUG="false" \
 	-e IS_ENABLE_PROM="false" \
 	-e IS_PRODUCTION="true" \
@@ -67,6 +66,7 @@ docker run -it -p 5005:8000 \
 	-e JWT_ACCESS_SECRET="ocSbpF5qQjBbutPR85g7VHfQn1v7dGYO0IVEoH9xq2hmWDa6bVxX8NWk6OcpdEZN" \
 	-e JWT_REFRESH_EXP_TIME="30d" \
 	-e JWT_REFRESH_SECRET="mwgqOZsFf8hWNdOtbKQQLGPhwWXQQQ0hHOKZvypj82uJuENwjNPqXLBMdKRYsqBq" \
+	-e MIGRATIONS_PATH="./migraions" \
 	go-ushort \
 	&& docker logs -f go-ushort
 # run docker container
